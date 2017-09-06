@@ -1,0 +1,1048 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    
+      
+        <title>Json Management Patterns In Go</title>
+      
+    
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Hugo 0.26" />
+    
+    
+        
+    
+
+    
+
+    <link rel="apple-touch-icon-precomposed"
+        href='/favicon/apple-touch-icon-precomposed.png'>
+    <link rel="icon" href='/favicon/favicon.png'>
+    
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage"
+        content='/favicon/mstile.png'>
+
+
+
+    
+      <meta name="author" content="Brandon Okert">
+    
+    
+      <meta name="description" content="Patterns for Effective Json Management in Go">
+    
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Json Management Patterns In Go"/>
+<meta name="twitter:description" content="Patterns for Effective Json Management in Go"/>
+<meta name="twitter:site" content="@BrandonOkert"/>
+
+    <meta property="og:title" content="Json Management Patterns In Go" />
+<meta property="og:description" content="Patterns for Effective Json Management in Go" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://brandonokert.com/articles/json-management-patterns-in-go/" />
+
+
+
+<meta property="article:published_time" content="2016-04-18T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2016-04-18T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+<meta itemprop="name" content="Json Management Patterns In Go">
+<meta itemprop="description" content="Patterns for Effective Json Management in Go">
+
+
+<meta itemprop="dateModified" content="2016-04-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1838">
+
+
+
+<meta itemprop="keywords" content="go,golang,json,rest,validation,patterns," />
+
+    
+
+    
+
+    <link rel="stylesheet" href="/css/google-font.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/add-on.css" />
+    <link rel="stylesheet" href="/css/monokai-sublime.css">
+
+    
+      <link rel="stylesheet" href="/css/custom.css" />
+    
+
+    
+    
+    
+      
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66027344-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+    
+  </head>
+  <body>
+
+    
+    <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+        <h2><a href="/">Brandon Okert</i></a></h2>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                        
+                            <i class="fa fa-file-text-o">&nbsp;</i>Articles
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/tags/">
+                        
+                            <i class="fa fa-tags">&nbsp;</i>Tags
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                        
+                            <i class="fa fa-question-circle-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="q" value="site:http://brandonokert.com/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="q" value="site:http://brandonokert.com/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                
+                                    <i class="fa fa-file-text-o">&nbsp;</i>
+                                
+                                Articles
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/tags/">
+                            <h3>
+                                
+                                    <i class="fa fa-tags">&nbsp;</i>
+                                
+                                Tags
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                
+                                    <i class="fa fa-question-circle-o">&nbsp;</i>
+                                
+                                About
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/json-management-patterns-in-go/"><p>Json Management Patterns In Go</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"><p>Scaling with Docker Part 2</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-1/"><p>Scaling with Docker Part 1</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/testinginreact/"><p>Testing in React</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/phpmessagescheduler/"><p>Building a Distributed Message Scheduler in PHP</p></a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&text=Json%20Management%20Patterns%20In%20Go&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+    <header>
+    <div class="title">
+        
+            <h1><a href="http://brandonokert.com/articles/json-management-patterns-in-go/">Json Management Patterns In Go</a></h1>
+            
+        
+        
+            <p>Patterns for Effective Json Management in Go</p>
+        
+    </div>
+    <div class="meta">
+        
+            
+        
+
+        <time class="published"
+            datetime='2016-04-18'>
+            April 18, 2016</time>
+        <span class="author">Brandon Okert</span>
+        
+        
+    </div>
+</header>
+
+
+    <section id="social-share">
+        <ul class="icons">
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&text=Json%20Management%20Patterns%20In%20Go&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f&title=Json%20Management%20Patterns%20In%20Go" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fjson-management-patterns-in-go%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+    
+    
+
+    
+        
+        
+
+
+
+
+    
+
+
+        
+
+        <a href="http://brandonokert.com/articles/json-management-patterns-in-go/" class="image featured">
+            <img src="/img/Json-Management-Patterns-In-Go//primer.png" alt="" />
+        </a>
+    
+
+
+    <div id="content">
+        
+
+<p>Managing Json in Go is not a trivial problem. There are many examples out there of how to decode a simple json document into a struct, but few that answer the questions that inevitably come up:</p>
+
+<ul>
+<li>How do I provide defaults for fields?</li>
+<li>How do I make a field optional?</li>
+<li>How do I avoid using defaults for certain fields (eg: a user id)?</li>
+<li>How do I prevent pointer maintenance issues down the road?</li>
+<li>How do I validate all this?</li>
+</ul>
+
+<p>Below I&rsquo;ve outlined several <a href="#patterns">Patterns</a> that provide ideomatic, easy to use, and easy to test solutions that provide these <a href="#features">Features</a>. Different <a href="#patterns">Patterns</a> achieve different <a href="#features">Features</a> - thus you can pick the solution that is most relevant to your application.</p>
+
+<p>Keep reading to learn about the individual <a href="#features">Features</a> we&rsquo;ll be covering, or skip right to the <a href="#patterns">Patterns</a> to learn them as they come up.</p>
+
+<h1 id="primer">Primer</h1>
+
+<p>
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/Json-Management-Patterns-In-Go/primer.png" alt="Primer" />
+        </span></p>
+    
+
+
+A Model is a struct that has meaning in our application - a User, a Scene, a Parcel. Models can be Marshaled into json. Inversely, json can be Unmarshaled into new Models. In all but the most trivial applications, we need to Validate incoming json, which in go is usually done after Unmarshaling.</p>
+
+<p>When Unmarshaling json into a Model, we utilize struct tags to denote the field name. When Marshaling, we use the same tags, as well as a new one to signal whether it should be omitted when empty:</p>
+
+<pre><code class="language-golang">type Model struct {
+  UserId uint `json:&quot;user_id&quot;`
+  Address string `json:&quot;address,omitempty&quot;` // if empty, don't encode it at all
+}
+</code></pre>
+
+<p>Our desired <a href="#features">Features</a> dictate how we structure our Models, and how we Marshal, Unmarshal, and Validate them.</p>
+
+<h1 id="features">Features</h1>
+
+<p>Below I&rsquo;ve described each feature in detail. Each Pattern also provides links to these Features.</p>
+
+<h2 id="default-fields">Default Fields</h2>
+
+<pre><code class="language-golang">ProductCount uint // required, but zero is a safe default
+</code></pre>
+
+<p>This is a field that is required, but if not provided we&rsquo;re ok with the default value provided by Go.</p>
+
+<p>Defaults in Go come for free - if a field is not present in the source json, a default value (0, &ldquo;&rdquo;, nil, etc.) will be used. This can be very convenient, but it only works in cases where the default value makes sense (you wouldn&rsquo;t want to provide a default name for a user).</p>
+
+<h2 id="custom-default-fields">Custom Default Fields</h2>
+
+<pre><code class="language-golang">FavoriteColor string // a default is ok, but we don't want the empty string
+</code></pre>
+
+<p>This is a field where you want a default value, but not the zero value.</p>
+
+<p>The process is a little more involved than basic default values since we need an in-between step, but we&rsquo;ll see how supporting <a href="#required-non-default-fields">Required Non Default Fields</a> can give us <a href="#custom-default-fields">Custom Default Fields</a> for free.</p>
+
+<h2 id="optional-fields">Optional Fields</h2>
+
+<pre><code class="language-golang">Address *string // not required, but we still want to validate it if it's there
+</code></pre>
+
+<p>This is a field that may or may not be available. If present, we want to validate it, but if not present, we don&rsquo;t want to fail validation.</p>
+
+<p>Github popularized the <a href="https://willnorris.com/2014/05/go-rest-apis-and-pointers">method of using pointers for this purpose</a>, as their default value is nil and there is no such thing as a pointer in json. It adds a bit of overhead, but really there&rsquo;s no way around this - sometimes it&rsquo;s there, sometimes it&rsquo;s not. Validation is more tedious if you&rsquo;re not using <a href="#easy-validation">Easy Validation</a>, as you have to handle both the case where it&rsquo;s present and the case where it&rsquo;s not. For fields that you don&rsquo;t want defaults for, but still want them to be required, use <a href="#required-non-default-fields">Required Non Default Fields</a> instead.</p>
+
+<h2 id="required-non-default-fields">Required Non Default Fields</h2>
+
+<pre><code class="language-golang">UserId *uint // it's required, but providing a default doesn't make sense
+</code></pre>
+
+<p>This is a field that is required, but we don&rsquo;t want to provide a default for. Validating it is similar to <a href="#optional-fields">Optional Fields</a>, except the case where it is missing is now invalid.</p>
+
+<p>We can re-use the pointer method from <a href="#optional-fields">Optional Fields</a>, and just change the validation. However, this leaves us with a pointer that will always have a value, which adds unwanted maintenance. We can avoid this completely with <a href="#dereferenced-required-fields">Dereferenced Required Fields</a>.</p>
+
+<h2 id="dereferenced-required-fields">Dereferenced Required Fields</h2>
+
+<pre><code class="language-golang">type Request struct {
+  UserId *uint // this is a Required Non-Default Field, so it needs a pointer
+}
+
+type Model struct {
+  UserId uint // but it's not optional, so we don't want the pointer in the model
+}
+</code></pre>
+
+<p>This is a meta-feature, wherein we&rsquo;ve used a pointer in our struct, but really that pointer should never be nil. By de-referencing it, we save ourselves maintenance and testability headaches down the road.</p>
+
+<p>The idea is to separate the model from the json request that creates it, using intermediate representations. As we&rsquo;ll see, this can make other <a href="#features">Features</a> like <a href="Custom_Default_Fields">Custom Default Fields</a> trivial to implement, and it can make partial updates (where any subset of fields may be present) easier to manage down the road.</p>
+
+<h2 id="easy-validation">Easy Validation</h2>
+
+<pre><code class="language-golang">UserId *uint `validate:&quot;nonzero&quot;`
+Age Uint `validate:&quot;min=18&quot;`
+</code></pre>
+
+<p>Easy Validation lets us verify that our models are in a legal state after Unmarshaling, without having to manually verify every field and every case.</p>
+
+<p>In its simplest form, validation can be done manually, thus making it easy to port to any solution. The ideomatic <a href="https://github.com/go-validator/validator">Go Validator</a> is an alternative to manual validation with many desirable qualities. However, there are a few tricks to making it support <a href="#optional-fields">Optional Fields</a>, and <a href="#required-non-default-fields">Required Non Default Fields</a>. We can simplify it further via the intermediate representations from <a href="#dereferenced-required-fields">Dereferenced Required Fields</a>.</p>
+
+<h1 id="patterns">Patterns</h1>
+
+<p>Each Pattern provides a subset of the above <a href="#features">Features</a>. The Patterns increase in complexity as you go, so you should pick the earliest one that satisfies all your requirements. Most of the more complex Patterns focus on doing more work up front so that maintenance down the road is much easier.</p>
+
+<h2 id="pattern-1">Pattern 1</h2>
+
+<p>Features: <a href="$Default_Fields">Default Fields</a>, <a href="#easy-validation">Easy Validation</a></p>
+
+<p>This is our base case pattern with very little maintenance or setup involved. If your api is simple, this is the way to go.</p>
+
+<pre><code class="language-golang">// model
+type User struct {
+     Name string    `json:&quot;name&quot;    validate:&quot;nonzero&quot;`
+     Age uint       `json:&quot;age&quot;     validate:&quot;min=1&quot;`
+     Address string `json:&quot;address&quot; validate:&quot;nonzero&quot;`
+}
+
+// unmarshalling
+var user User
+if err := json.NewDecoder(jsonByteSlice).Decode(&amp;user); err != nil {...}
+
+// marshalling
+if jsonByteSlice, err := json.Marshal(object); err != nil {...}
+
+// validation
+if errs := validator.Validate(user); errs != nil {...}
+</code></pre>
+
+<h2 id="pattern-2">Pattern 2</h2>
+
+<p>Features: <a href="$Default_Fields">Default Fields</a>, <a href="#optional-fields">Optional Fields</a>, <a href="#required-non-default-fields">Required Non Default Fields</a></p>
+
+<p>If you just want <a href="#optional-fields">Optional Fields</a> and <a href="#required-non-default-fields">Required Non Default Fields</a>, and don&rsquo;t mind manually validating and dealing with some maintenance overhead, use this pattern.</p>
+
+<pre><code class="language-golang">// model
+type User struct {
+     Name          *string `json:&quot;name&quot;`              // required, but no defaults
+     Age           *uint   `json:&quot;age,omitempty&quot;`     // optional
+     Address       *string `json:&quot;address,omitempty&quot;` // optional
+     FavoriteColor string  `json:&quot;favoriteColor&quot;`     // required, uses defaults
+}
+
+// unmarshalling
+var user User
+if err := json.NewDecoder(jsonByteSlice).Decode(&amp;user); err != nil {...}
+
+// marshalling
+if jsonByteSlice, err := json.Marshal(object); err != nil {...}
+
+// validation
+func Validate(user User) {
+     // default - validate value
+     // optional - if non nil, validate value
+     // required non default - validate not nil, then validate value
+}
+</code></pre>
+
+<h2 id="pattern-3">Pattern 3</h2>
+
+<p>Features: <a href="$Default_Fields">Default Fields</a>, <a href="#optional-fields">Optional Fields</a>, <a href="#required-non-default-fields">Required Non Default Fields</a>, <a href="#easy-validation">Easy Validation</a></p>
+
+<p>You can make Pattern 2 support <a href="#easy-validation">Easy Validation</a> by using multiple validators, plus a custom validator for edge cases. If <a href="https://github.com/go-validator/validator">Go Validator</a> encounters a pointer, and it is nil, it ignores it, otherwise it dereferences and validates it. This supports <a href="#optional-fields">Optional Fields</a>. If you combine it with the nonzero validator, you can support <a href="#required-non-default-fields">Required Non Default Fields</a>:</p>
+
+<pre><code class="language-golang">UserId *uint `validate:&quot;nonzero,min=100&quot;`
+</code></pre>
+
+<p>The UserId is a pointer, but it has the nonzero validator, so it can&rsquo;t be nil. It also has the min validator, which only checks the value if it is a non-nil pointer. Combined, they provide <a href="#required-non-default-fields">Required Non Default Fields</a>.</p>
+
+<p>There is a minor catch, in that we can no longer use the nonzero validator on our <a href="#optional-fields">Optional Fields</a> and <a href="#required-non-default-fields">Required Non Default Fields</a>. This is easily mitigated in most cases by using the min=1 validator instead, but in some cases, like integers, we cannot prevent a zero value. If this is important, you can use a <a href="https://godoc.org/gopkg.in/validator.v2#hdr-Custom_validation_functions">Custom Validator</a>.</p>
+
+<pre><code class="language-golang">// model
+type User struct {
+     Name          *string `json:&quot;name&quot;              validate:&quot;nonzero,min=1&quot;` // required, but no defaults
+     Age           *uint   `json:&quot;age,omitempty&quot;     validate:&quot;min=1&quot;`         // optional
+     Address       *string `json:&quot;address,omitempty&quot; validate:&quot;min=1&quot;`         // optional
+     FavoriteColor string  `json:&quot;favoriteColor&quot;`                              // required, uses defaults
+}
+
+// unmarshalling
+var user User
+if err := json.NewDecoder(jsonByteSlice).Decode(&amp;user); err != nil {..}
+
+// marshalling
+if jsonByteSlice, err := json.Marshal(object); err != nil {...}
+
+// validation
+if errs := validator.Validate(user); errs != nil {...}
+</code></pre>
+
+<h2 id="pattern-4">Pattern 4</h2>
+
+<p>Features: <a href="$Default_Fields">Default Fields</a>, <a href="#required-non-default-fields">Required Non Default Fields</a>, <a href="#easy-validation">Easy Validation</a>, <a href="#custom-default-fields">Custom Default Fields</a>, <a href="#dereferenced-required-fields">Dereferenced Required Fields</a></p>
+
+<p>This Pattern provides all of the <a href="#features">Features</a> we&rsquo;ve discussed, and lets us simplify the validation from <a href="#pattern-3">Pattern 3</a>. It&rsquo;s a good general purpose solution that avoids some long term maintenance, but is probably overkill for very simple projects.</p>
+
+<p>The idea is to create an intermediate representation, one for each interface to the model. This separates the model from how it is built. For example, you might have a User model, a PostUserRequest, and a PutUserRequest, each with different validation. The business logic only cares about the Model, so it can be helpful to decouple said Model from how it is constructed or modified.</p>
+
+<p>This separation of validation lets us achieve <a href="#custom-default-fields">Custom Default Fields</a> and <a href="#dereferenced-required-fields">Dereferenced Required Fields</a> in a natural way, by performing them during the translation from intermediate representation to Model.</p>
+
+<p>It also removes the catch from Pattern 3 for <a href="#required-non-default-fields">Required Non Default Fields</a>, since we validate the pointer separately from the value.</p>
+
+<pre><code class="language-golang">// post request
+type UserPostRequest struct {
+     Name               *string `json:&quot;name&quot; validate:&quot;nonzero&quot;` // required, but no defaults
+     Age                *uint   `json:&quot;age&quot;`                     // optional
+     Address            *string `json:&quot;address&quot;`                 // optional
+     FavoriteInstrument string  `json:&quot;favoriteInstrument&quot;`      // required, uses defaults
+     FavoriteColor      *string `json:&quot;favoriteColor&quot;`           // required, uses custom defaults
+}
+
+// model
+type User struct {
+     Name               string  `json:&quot;name&quot; validate:&quot;nonzero&quot;`            // required
+     Age                *uint   `json:&quot;age,omitempty&quot; validate:&quot;min=1&quot;`     // optional
+     Address            *string `json:&quot;address,omitempty&quot; validate:&quot;min=1&quot;` // optional
+     FavoriteInstrument string  `json:&quot;favoriteInstrument&quot;`                 // required
+     FavoriteColor      string  `json:&quot;favoriteColor&quot; validate:&quot;nonzero&quot;`   // required
+}
+
+// unmarshalling
+var postRequest UserPostRequest
+if err := json.NewDecoder(jsonByteSlice).Decode(&amp;postRequest); err != nil {..}
+if errs := validator.Validate(postRequest); errs != nil {...}
+
+user.Name = *postRequest.Name
+user.Age = postRequest.Age
+user.Address = postRequest.Address
+user.FavoriteInstrument = postRequest.FavoriteInstrument
+user.FavoriteColor = &quot;blue&quot;
+if postRequest.FavoriteColor != nil {
+  user.FavoriteColor = *postRequest.FavoriteColor
+}
+if errs := validator.Validate(user); errs != nil {...}
+
+// marshalling
+if jsonByteSlice, err := marshal(object); err != nil {...}
+
+// validation
+if errs := validator.Validate(user); errs != nil {...}
+</code></pre>
+
+<p>Though it looks like unnecessary duplication, this format lets you separate the PostRequest from the actual Model, which can be very useful. Notice how we also did all the validation the Model, except for <a href="#required-non-default-fields">Required Non Default Fields</a>.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>I&rsquo;ve covered 4 different <a href="#patterns">Patterns</a> for json management, each more comprehensive than the last. Hopefully I&rsquo;ve also given you a good feeling for what <a href="#features">Features</a> might be needed in a json api, and how you can approach providing them.</p>
+
+<p>I&rsquo;m currently battle testing Pattern 4 in a project of mine - <a href="https://github.com/bcokert/render-cloud">Render Cloud</a>.</p>
+
+<p>I hope this overview is useful to you. I learned a lot by coming up with the <a href="#patterns">Patterns</a> and investigating them, and I hope this will expedite the process for your own projects.</p>
+
+    </div>
+
+    <footer>
+        <ul class="stats">
+    
+        
+
+        
+        
+            <li>
+                
+                
+                    
+
+                    
+
+                    
+                        <i class="Page(&#34;Json Management Patterns In Go&#34;)">&nbsp; Tags</i>
+                    
+                
+            </li>
+        
+    
+
+    
+    
+        <li><a href='/tags/go'>go</a></li>
+    
+        <li><a href='/tags/golang'>golang</a></li>
+    
+        <li><a href='/tags/json'>json</a></li>
+    
+        <li><a href='/tags/rest'>rest</a></li>
+    
+        <li><a href='/tags/validation'>validation</a></li>
+    
+        <li><a href='/tags/patterns'>patterns</a></li>
+    
+</ul>
+
+    </footer>
+</article>
+<ul class="actions pagination">
+    
+        <li><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"
+                class="button big previous">Scaling with Docker Part 2</a></li>
+    
+
+    
+</ul>
+
+
+
+    
+        <article class="post">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "brandonokert" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </article>
+    
+
+
+    </div>
+    
+<section id="sidebar">
+
+    
+        <section id="intro">
+            
+            
+                
+                    <img src="http://www.gravatar.com/avatar/1796d3ceead403d9616a2093bc42ec18?s=110" width="" alt="My face" />
+                
+            
+            
+                <header>
+                    <h2>Brandon Okert</h2>
+                    <p>Husband, Full Stack Web Developer, Gopher, Runner, Coffee Lover, Book Reader, Food Maker.</p>
+                </header>
+            
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+        </section>
+
+    
+      
+        <section id="recent-posts">
+            <ul class="posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    
+                
+
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/json-management-patterns-in-go/">Json Management Patterns In Go</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-04-18'>
+                                    April 18, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/">Scaling with Docker Part 2</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-03-07'>
+                                    March 7, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/">Scaling with Docker Part 1</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-02-16'>
+                                    February 16, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/testinginreact/">Testing in React</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2015-08-04'>
+                                    August 4, 2015</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/phpmessagescheduler/">Building a Distributed Message Scheduler in PHP</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2014-07-21'>
+                                    July 21, 2014</time>
+                            </header>
+                        </article>
+                    </li>
+                
+
+                
+                    <li>
+                        <ul class="actions">
+                            <li><a href=
+                            
+                                /
+                            
+                            class="button">View more posts</a></li>
+                        </ul>
+                    </li>
+                
+            </ul>
+        </section>
+      
+
+    
+
+    
+        
+
+    
+        <section id="footer">
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+
+            <p class="copyright">&copy; BrandonOkert.com. Powered by <a href="//gohugo.io" target="_blank">Hugo</a></p>
+        </section>
+
+</section>
+
+            </div>
+        <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+        
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/util.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/backToTop.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+
+        
+            <script src="/js/sequenced-image.js"></script>
+        
+
+            
+            <script>hljs.initHighlightingOnLoad();</script>
+            
+    </body>
+</html>
+

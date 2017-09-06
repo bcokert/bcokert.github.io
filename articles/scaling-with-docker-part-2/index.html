@@ -1,0 +1,1329 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    
+      
+        <title>Scaling with Docker Part 2</title>
+      
+    
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Hugo 0.26" />
+    
+    
+        
+    
+
+    
+
+    <link rel="apple-touch-icon-precomposed"
+        href='/favicon/apple-touch-icon-precomposed.png'>
+    <link rel="icon" href='/favicon/favicon.png'>
+    
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage"
+        content='/favicon/mstile.png'>
+
+
+
+    
+      <meta name="author" content="Brandon Okert">
+    
+    
+      <meta name="description" content="Scaling Docker with Examples">
+    
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Scaling with Docker Part 2"/>
+<meta name="twitter:description" content="Scaling Docker with Examples"/>
+<meta name="twitter:site" content="@BrandonOkert"/>
+
+    <meta property="og:title" content="Scaling with Docker Part 2" />
+<meta property="og:description" content="Scaling Docker with Examples" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://brandonokert.com/articles/scaling-with-docker-part-2/" />
+
+
+
+<meta property="article:published_time" content="2016-03-07T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2016-03-07T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+<meta itemprop="name" content="Scaling with Docker Part 2">
+<meta itemprop="description" content="Scaling Docker with Examples">
+
+
+<meta itemprop="dateModified" content="2016-03-07T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="4523">
+
+
+
+<meta itemprop="keywords" content="docker,scaling,mesos,containers,virtual-machines,production,service-discovery,consul,consul-template,load-balancing,ha-proxy,medium-scale,large-scale,images," />
+
+    
+
+    
+
+    <link rel="stylesheet" href="/css/google-font.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/add-on.css" />
+    <link rel="stylesheet" href="/css/monokai-sublime.css">
+
+    
+      <link rel="stylesheet" href="/css/custom.css" />
+    
+
+    
+    
+    
+      
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66027344-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+    
+  </head>
+  <body>
+
+    
+    <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+        <h2><a href="/">Brandon Okert</i></a></h2>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                        
+                            <i class="fa fa-file-text-o">&nbsp;</i>Articles
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/tags/">
+                        
+                            <i class="fa fa-tags">&nbsp;</i>Tags
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                        
+                            <i class="fa fa-question-circle-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="q" value="site:http://brandonokert.com/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="q" value="site:http://brandonokert.com/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                
+                                    <i class="fa fa-file-text-o">&nbsp;</i>
+                                
+                                Articles
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/tags/">
+                            <h3>
+                                
+                                    <i class="fa fa-tags">&nbsp;</i>
+                                
+                                Tags
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                
+                                    <i class="fa fa-question-circle-o">&nbsp;</i>
+                                
+                                About
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/json-management-patterns-in-go/"><p>Json Management Patterns In Go</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"><p>Scaling with Docker Part 2</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-1/"><p>Scaling with Docker Part 1</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/testinginreact/"><p>Testing in React</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/phpmessagescheduler/"><p>Building a Distributed Message Scheduler in PHP</p></a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&text=Scaling%20with%20Docker%20Part%202&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+    <header>
+    <div class="title">
+        
+            <h1><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/">Scaling with Docker Part 2</a></h1>
+            
+        
+        
+            <p>Scaling Docker with Examples</p>
+        
+    </div>
+    <div class="meta">
+        
+            
+        
+
+        <time class="published"
+            datetime='2016-03-07'>
+            March 7, 2016</time>
+        <span class="author">Brandon Okert</span>
+        
+        
+    </div>
+</header>
+
+
+    <section id="social-share">
+        <ul class="icons">
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&text=Scaling%20with%20Docker%20Part%202&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f&title=Scaling%20with%20Docker%20Part%202" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-2%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+    
+    
+
+    
+        
+        
+
+
+
+
+    
+
+
+        
+
+        <a href="http://brandonokert.com/articles/scaling-with-docker-part-2/" class="image featured">
+            <img src="/img/Scaling-With-Docker-Part-2//docker-thumb.png" alt="" />
+        </a>
+    
+
+
+    <div id="content">
+        
+
+<p>This is the second in a two part blog about Scaling with Docker. In this part, we&rsquo;ll take what we learned in Part 1 and use it to create a scalable and resilient service with Docker. While the previous part took a more conceptual route, this part will focus more on practical applications. At each stage we&rsquo;ll update a set of scripts to automate building and deploying, and go through a few tests to get familiar with the results. Then I&rsquo;ll show you how you can use the same techniques on multiple services, and finally give an overview of how to scale massively, to thousands of hosts.</p>
+
+<p>I&rsquo;ve implemented an example project on <a href="https://github.com/bcokert/scaling-with-docker-example">github</a>. As you go through the steps here, I&rsquo;ll let you know when to check out different tags, if you want to follow along with the code.</p>
+
+<h1 id="getting-ready">Getting Ready</h1>
+
+<p>We&rsquo;re going to need a few things to build our first Docker Host. We need a service to work with. We need to install Virtual Box to run our docker hosts. And we&rsquo;ll need Docker itself.</p>
+
+<p>These instructions are written assuming you&rsquo;re using OSX or Linux; the process for Windows is equivalent to that of OSX, though you&rsquo;ll have to translate a few terminal commands.</p>
+
+<h2 id="service">Service</h2>
+
+<p class='follow-prompt'>If you're following along with the code, please run <code>git checkout step1</code></p>
+
+<p>If you&rsquo;ve already got a service you want to test with, great! If not, I&rsquo;ll be using a toy service in all of my examples, so that it&rsquo;s easy to experiment without managing a complex service. To use your service instead of the toy one, just replace the toy service with yours in the build-scripts and deploy-scripts - I&rsquo;ll point out where you need to do this.</p>
+
+<p>You can test the toy service by going into the src folder and running <code>./start.sh.</code> Then browse to <code>localhost:8080/example1.html</code> to see if it hits our &ldquo;endpoint&rdquo;. I&rsquo;ve made 2 endpoints for your testing pleasure. Later when we develop the build and deploy scripts, we&rsquo;ll &ldquo;build&rdquo; it by copying the content of <code>src/</code> to <code>build/</code>.</p>
+
+<h2 id="virtual-box">Virtual Box</h2>
+
+<p>If you&rsquo;re on OSX or Windows, virtual box will be installed for you when you install Docker Toolbox (if you don&rsquo;t already have it). Otherwise, install via your favorite package manager or the <a href="https://www.virtualbox.org/wiki/Downloads">downloads page</a>. Version shouldn&rsquo;t matter, but you don&rsquo;t want one too old. Also, make sure to install the extensions if prompted.</p>
+
+<p>We&rsquo;ll be using Docker Machine to actually create and manage our VM&rsquo;s, so once you&rsquo;re installed, you&rsquo;re good to go.</p>
+
+<h2 id="docker-and-docker-toolbox">Docker and Docker Toolbox</h2>
+
+<p>On linux, you can install each package individually. On OSX and Windows, installing Toolbox will install everything you need.</p>
+
+<p>I&rsquo;m going to leave the installing to the <a href="https://docs.docker.com/engine/installation/">fine documentation on the docker website</a>, as it&rsquo;s pretty comprehensive, and the instructions change from version to version.</p>
+
+<h1 id="building-a-docker-host">Building a Docker Host</h1>
+
+<p>Let&rsquo;s go back to the conversion from a VM to a Docker Host. You&rsquo;ve seen this before, but this time we&rsquo;re going to implement it.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-1/converting-to-docker/' >
+<p>On the left is a typical server, perhaps on a VM. It's running a web service and database daemon, and storing data in some directory.</p>
+<p>First we install Docker Engine, thus converting our Host on the right into a Docker Host.</p>
+<p>Then we convert each of the processes on the left into Containers. This is a common theme - typically we want 1 main process per container.</p>
+<p>Our data comes over as a Volume. This is functionally the same as before, but now the volume lives on the Host, and is mounted into each Container. This enables the data to persist beyond the life of a container, and enables sharing of data. This can be done in a read only fashion.</p>
+<p>Architecturally these hosts are nearly identical, thus we call the one on the right a Docker Host.</p>
+</div>
+
+<p>Throughout this post, most of the work will be done with shell scripts. This is to make it maximally transferable, and easy to understand what&rsquo;s going on. If you&rsquo;re already comfortable with tools like Docker Compose, feel free to use those instead.</p>
+
+<p>We&rsquo;ll need a few scripts by the end:</p>
+
+<ul>
+<li><code>resources/dockerfiles/dockerfile-X</code> - these will be our dockerfiles, which we&rsquo;ll need one of per image</li>
+<li><code>resources/dev-scripts/build-X.sh</code> - these will update our docker images when the underlying application or service changes, and push the results up to the registry. We&rsquo;ll need one per image type.</li>
+<li><code>resources/server-scripts/deploy.sh</code> - this is a server side script, and deploys an entire host. For complex applications, you&rsquo;d probably split this into a few scripts, but we&rsquo;ll just use one for brevity. This script will deploy ALL of our containers, and it&rsquo;s arguments will determine how we scale.</li>
+</ul>
+
+<h2 id="creating-a-dockerfile">Creating a Dockerfile</h2>
+
+<p class='follow-prompt'>If you're following along with the code, please run <code>git checkout step2</code>.</p>
+
+<p>Remember the process of creating an image from a dockerfile?</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-1/images-and-dockerfiles/' >
+<p>On the right is our Dockerfile. On the left, the image made from it.</p>
+<p>The first command is always a FROM command. You specify a base image here to get a default set of libraries and configuration, for a specific platform. You can also specify scratch as a base image, meaning that no files and configuration will be installed.</p>
+<p>The next commands are to setup the dependencies of your runtime. This is no different from the steps you'd run in a provisioner, like Ansible. You might also get some of your dependencies from the base image itself. There's a java:8 base image for example, as well as a consul one.</p>
+<p>Next you install your app itself, as well as any local configuration. This is the deploy artifact you generate via your build tools.</p>
+<p>After this, you can do any container specific setup. Open ports, setup environment variables, mount volumes, anything. Ideally you'll keep the number of commands to a minimum, as each command creates a new layer in your image.</p>
+<p>Once you've created, pushed up, and pulled down an image, you can create a container via the docker run command. The path to init script would have been copied over when you installed the application artifact.</p>
+</div>
+
+<p>Our first dockerfile is in <code>resources/dockerfiles/dockerfile-server</code>.</p>
+
+<p>An important note if you&rsquo;re getting started with docker - the Dockerfile doesn&rsquo;t build our application. It only builds our <em>image</em>. It assumes we&rsquo;ve already build the application by the time we run the dockerfile.</p>
+
+<h2 id="creating-and-storing-images">Creating and Storing Images</h2>
+
+<p>We can now create our image. However, this requires we already have a registry setup.</p>
+
+<p>Don&rsquo;t want to build the image yourself? You can download a ready to go image from <a href="https://hub.docker.com/r/bcokert/simple-server/">my dockerhub repo</a>. I&rsquo;ll show you how in the next section.</p>
+
+<h3 id="registry">Registry</h3>
+
+<p>If you&rsquo;ve got a registry already, feel free to use it. Otherwise, take a minute to go to <a href="https://hub.docker.com/">dockerhub</a> and setup an account. If you&rsquo;re following along with the code examples, go ahead and <a href="https://hub.docker.com/add/repository/">create a repository</a> called <code>example-server</code>. Once you&rsquo;ve done so, you can login to dockerhub via <code>docker login</code>.</p>
+
+<p>To use my pre-built image instead of building your own just run <code>docker pull bcokert/simple-service</code>.</p>
+
+<h3 id="docker-host">Docker Host</h3>
+
+<p>For most of this tutorial we&rsquo;ll be using the default machine. There&rsquo;s nothing special about this machine, except that in docker 1.10 and higher if you omit the name in commands, it will automatically look for a machine called &ldquo;default&rdquo;.</p>
+
+<p><code>docker-machine create &ndash;driver virtualbox default </code></p>
+
+<p>Once it&rsquo;s done, you can log into it via <code>docker-machine ssh default</code>, and then use your docker commands from there. However, with docker-machine it is common to export some environment variables to enable using docker directly from your terminal.</p>
+
+<pre><code>&gt; docker-machine env default
+export DOCKER_TLS_VERIFY=&quot;1&quot;
+export DOCKER_HOST=&quot;tcp://192.168.99.100:2376&quot;
+export DOCKER_CERT_PATH=&quot;/Users/username/.docker/machine/machines/default&quot;
+export DOCKER_MACHINE_NAME=&quot;default&quot;
+</code></pre>
+
+<p>You run <code>eval &ldquo;$(docker-machine env default)&rdquo;</code> in your terminal before using docker. If you run fish terminal (or a more esoteric one), you might need to <a href="https://docs.docker.com/machine/reference/env/">pass something special to the &ndash;shell option of env</a>.</p>
+
+<h3 id="putting-it-together">Putting it together</h3>
+
+<p class='follow-prompt'>If you're following along with the code, please run <code>git checkout step3</code>.</p>
+
+<p>Instead of pushing our image up to a repository manually, we&rsquo;re going to go right to automating our build process to make this quicker down the road.</p>
+
+<p>The <code>resources/dev-scripts/build-service.sh</code> script automatically checks that we&rsquo;re logged in to docker hub, makes sure the right docker machine is running and available, creates our image, and pushes it up to our repository for us. If you&rsquo;re following along and have your own repository, use the environment variable <code>DOCKER_REPOSITORY</code> to avoid having to copy paste your repository all over the place.</p>
+
+<p>The key part of the build process is building our actual project - compiling, bundling, minifying, or whatever &ldquo;building&rdquo; means for your project. The end result should be a set of artifacts, which we then just copy into our image.</p>
+
+<h2 id="testing-our-image">Testing our Image</h2>
+
+<p>Let&rsquo;s give this container a quick test to make sure it&rsquo;s setup properly:</p>
+
+<pre><code>&gt; docker run --name simple-server-test ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh&lt;/code&gt;
+</code></pre>
+
+<p>When you do this, your terminal will start receiving logs from that container. Kill it with ctrl-C, remove the now stopped container with <code>docker rm simple-server-test</code>, and re-run it as a daemon container:</p>
+
+<pre><code>&gt; docker run -d --name simple-server-test ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh
+</code></pre>
+
+<p>Now that it&rsquo;s running in the background, let&rsquo;s check on it:</p>
+
+<pre><code>&gt; docker ps -a                    # list all containers and some metadata about them
+&gt; docker logs simple-server-test  # show the stdout of the process that was run within your container
+&gt; docker rm -f simple-server-test # destroy the container, even if it is currently running
+</code></pre>
+
+<p>As you&rsquo;re testing, you&rsquo;ll probably create a lot of junk containers. You can nuke them all via:</p>
+
+<pre><code>&gt; docker rm -f $(docker ps -a -q)
+</code></pre>
+
+<h2 id="finishing-off-our-docker-host">Finishing off our Docker Host</h2>
+
+<p>Our simple server doesn&rsquo;t need a database, and each database has different requirements. However, if you&rsquo;ve managed to set up your service to use your database, the configuration will be very similar. So to keep our focus on scaling, I&rsquo;ll be skipping the database for now. At the end of this post, I&rsquo;ll point you to a sample scaled application that makes full use of a database, so don&rsquo;t fret!</p>
+
+<p>As for the data volume, I suggest <a href="https://docs.docker.com/engine/userguide/containers/dockervolumes/">reading this</a>, which will teach you everything you need to know about volume containers.</p>
+
+<h2 id="deploying-to-our-host">Deploying to our Host</h2>
+
+<p>We&rsquo;re ready to start deploying our containers! Because creating and destroying containers is so easy, we can test our full system deployment locally before doing so on our dev, staging, or production hosts.</p>
+
+<p>You&rsquo;ll need a Host to test this. However, if you don&rsquo;t have one, just stick with the docker-machine provided hosts for now. You could even play with docker-machine and create a staging host, if you really want to separate things.</p>
+
+<p>All you need to do is ssh into the host, and run the same docker commands as usual (no need to ssh if you&rsquo;re using docker-machine). In the next section, where we start scaling, we&rsquo;ll go over creating a deploy script that does all the work for us.</p>
+
+<p>Let&rsquo;s get to scaling!</p>
+
+<h1 id="scaling-docker-services">Scaling Docker Services</h1>
+
+<p>Believe it or not, setting up the initial Docker Host will probably take longer that scaling it, since further work uses the same techniques we&rsquo;ve just covered.</p>
+
+<h2 id="simple-horizontally-scaling">Simple Horizontally Scaling</h2>
+
+<p class='follow-prompt'>If you're following along with the code, please run <code>git checkout step4</code>.</p>
+
+<p>First we need to scale our service horizontally. Outside of docker, this just means having multiple servers available, so that if one goes down we&rsquo;re alright, and if we have a lot of requests, we can distribute them.</p>
+
+<p>This is incredibly easy to do in docker:</p>
+
+<pre><code>&gt; docker run -d --name simple_1 ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh 
+&gt; docker run -d --name simple_2 ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh 
+&gt; docker run -d --name simple_3 ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh 
+&gt; docker run -d --name simple_4 ${DOCKER_REPOSITORY}/simple-server /usr/local/lib/simple-service/runserver.sh 
+</code></pre>
+
+<p>Hey look at that! We just scaled our service to 4 nodes! Of course, we don&rsquo;t want to have to do this manually, so let&rsquo;s look at how our deploy script manages this for us.</p>
+
+<p>The <code>resources/server-scripts/deploy.sh</code> script takes several options and arguments. It takes care of logging in, checking that our docker machine is ok, cleaning up existing containers, and generally making deployments easy.</p>
+
+<p>Let&rsquo;s play with the script a bit:</p>
+
+<pre><code>&gt; resources/server-scripts/deploy.sh
+Usage:
+  deploy.sh [-h|--help] num_servers
+
+Options:
+  -h|--help            Display this help
+  --prefix             The prefix for the names of each server container
+
+Arguments:
+  num_servers          The number of servers to create
+
+
+&gt; resources/server-scripts/deploy.sh 4
+...
+Starting new server containers...
+cac317de62a3
+0318c5bfcc30
+49cbcafbb6c9
+98393db53211
+
+
+&gt; docker logs server_1
+Starting server on port 8080
+Serving HTTP on 0.0.0.0 port 8080 ...
+
+
+&gt; docker logs server_4
+Starting server on port 8080
+Serving HTTP on 0.0.0.0 port 8080 ...
+
+
+&gt; resources/server-scripts/deploy.sh 10
+...
+Cleaning up any existing containers...
+cac317de62a3
+0318c5bfcc30
+49cbcafbb6c9
+98393db53211
+Starting new server containers...
+3050f23df4c4
+0414c63df057
+7d74047078ef
+654b7bc662fd
+0c6bd3d2cc52
+7f1c99f9f2f1
+3a7397f1a0bd
+6ad940128667
+06a1f298fc0c
+0de416ccd931
+</code></pre>
+
+<h2 id="load-balancing-and-service-discovery">Load Balancing and Service Discovery</h2>
+
+<p>So we&rsquo;ve got horizontally scaling containers. But we don&rsquo;t want people to have to connect to them manually, and we&rsquo;d like them to be used equally. That&rsquo;s where load balancing comes in:</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/load-balancing/' >
+<p>Here's a host as with a single container.</p>
+<p>To scale it horizontally, we just have to add more containers. This is dead simple with docker.</p>
+<p>Finally, we load balance them behind a reverse proxy - all requests can go to the proxy instead of the servers, and it'll take care of sharing the load.</p>
+</div>
+
+<p>Haproxy was chosen here simply because it&rsquo;s performant, scales well, and is highly configurable.</p>
+
+<p>At this point we can make a scalable service by scaling our service containers and putting them behind reverse-proxy nodes. If we increase the number of containers and services, an important pattern shows up:</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/adding-services/' >
+<p>Let's start with a basic host.</p>
+<p>We could add more services by just adding different container types. But this won't scale well.</p>
+<p>So instead, we'll create _One Service Per Docker Host_. Each Host is the same - same configuration, same deployment process. It just has a different service container inside.</p>
+<p>Scaling is now just a matter of adding containers.</p>
+<p>We can add containers where they're needed...</p>
+<p>...thus scaling each host independently.</p>
+<p>We can even scale our load balancers the same way!</p>
+</div>
+
+<p>To add a load balancer, we&rsquo;re going to need a new dockerfile for haproxy, give it some basic configuration, then update our deploy script. You probably already have an idea of how that would look. But hold tight! There&rsquo;s a key weakness in the setup we&rsquo;ve just described that we need to address.</p>
+
+<p>Whenever we add or remove containers, we need to manually update our load balancers&rsquo; configuration, so it knows what containers to balance. Which means we have to know how many containers we have ahead of time&hellip; which means we can&rsquo;t scale on demand, we need to re-deploy our entire host every time we want to add or remove containers.</p>
+
+<p>The solution? Service Discovery:</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/service-discovery/' >
+<p>Service discovery first requires we keep an up to date inventory of all of our containers. In this case, I've created a few [Consul](https://www.consul.io/) servers, which will keep track of our containers internally.</p>
+<p>Each container is updated to have a [Consul Agent](https://www.consul.io/docs/agent/basics.html), which connects to the Consul Servers, thus keeping them up to date. The masters share their connected servers with each-other, to ensure consistency.</p>
+<p>If a container is added, its agent connects to the Quorum (the Servers that are still up and communicating correctly), which updates the inventory.</p>
+<p>If containers are lost, they disconnect from the Quorum, thus removing them from the inventory.</p>
+</div>
+
+<p>This gives us an up-to-date inventory of all of our containers. All we have to do is consume this inventory. We can use another consul agent for that - put the agent on the load balancer container, and any time it sees the inventory change, update the load balancers&rsquo; config automatically.</p>
+
+<p>There&rsquo;s a tool built by the same people that made consul that solves this exact problem! It&rsquo;s called Consul Template.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/consul-template/' >
+<p>We install consul-template on the load balancer container, just like a regular consul agent. As it's connected to the Consul Servers, it will automatically receive updates whenever the inventory changes.</p>
+<p>On the load balancer we put a configuration template. This is a [Go Template](https://gohugo.io/templates/go-templates/) that, when applied to the inventory, will generate our load balancers config.</p>
+<p>Upon receiving an inventory update, consul-template will apply the new inventory to the template, and generate a standard [haproxy config file](https://www.digitalocean.com/community/tutorials/how-to-use-haproxy-to-set-up-http-load-balancing-on-an-ubuntu-vps#configuring-haproxy).</p>
+<p>Finally, it tells the haproxy service to restart, which picks up the new configuration.</p>
+</div>
+
+<p>And with that, we&rsquo;re finally able to implement our load balanced, discoverable and auto updating docker hosts!</p>
+
+<h2 id="testing-load-balancing-and-service-discovery">Testing Load Balancing and Service Discovery</h2>
+
+<p class='follow-prompt'>If you're following along with the code, please run <code>git checkout step5</code>.</p>
+
+<p>Now that we&rsquo;ve gone over how service discovery and load balancing work, we can start playing with the example project to get a deeper understanding. We&rsquo;ll do this by using our deploy script, and looking at the various moving parts.</p>
+
+<p>If you&rsquo;re testing with a docker machine, you&rsquo;ll need to either login to the machine and curl endpoints to test them, or forward ports in virtual box. Since the latter is a much nicer experience, I&rsquo;ll go over that first.</p>
+
+<p>Open up virtualbox, find your machine, right click, and select settings. Then select the Network tab, and click Port Forwarding. Then setup your ports as follows (don&rsquo;t change the ssh one):</p>
+
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/Scaling-With-Docker-Part-2/virtualbox-ports.png" alt="VirutalBox Port Configuration" />
+        </span></p>
+    
+
+
+
+<p>Now you can hit your load balancers by going to <code>localhost:8X8X</code> on your local machine, or go to <code>localhost:8501/</code> to check on the status of consul:</p>
+
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/Scaling-With-Docker-Part-2/consul-ui.png" alt="VirutalBox Port Configuration" />
+        </span></p>
+    
+
+
+
+<p>Now lets play around with it a bit:</p>
+
+<pre><code class="language-stuff">&gt; resources/server-scripts/deploy.sh
+Usage:
+  deploy.sh [-h|--help] [-c|--consul] [-l|--lb num_lbs] num_servers
+
+Options:
+  -h|--help            Display this help
+  -c|--consul          Whether to redeploy the consul servers
+  -l|--lb num          How many load balancers to deploy. Defaults to 0
+  --prefix             The prefix for the names of each server container
+
+Arguments:
+  num_servers          The number of servers to create
+
+
+&gt; resources/server-scripts/deploy.sh -c -l 3 10
+...
+Starting new consul server containers...
+17a7391062e70
+e5126c48b5d4e
+ffaa15395ee75
+b3f4118b623b7
+b50fa883b3aec
+Giving consul servers a few seconds to elect someone...
+  The ui is available on each server, under port 850X, where X is the server number
+Finished deploying consul cluster!
+Starting new load balancer containers...
+07bd11df2998a
+d39c0a2489592
+a0c03230b1923
+Starting new server containers...
+ab74f9554cf6f
+0307d1b14f27b
+918c8f8c8cc60
+6089a9bfa0d28
+6b42d17cbcb26
+0b4115ab85b4c
+33095aba5cf6a
+eadfd5802b32c
+fbf36c26f9b4b
+b116d95d7b5cd
+
+
+&gt; curl localhost:8181
+...
+&gt; curl localhost:8181
+...
+&gt; curl localhost:8181
+...
+
+&gt; docker-machine ssh
+&gt;&gt; docker inspect simple_haproxy_1 | grep &quot;Mounts&quot; -A 3
+&gt;&gt; ... # prints the location of the volume on disk, so that we can go look at the proxy logs
+&gt;&gt; sudo -i
+&gt;&gt; cd /mnt/sda1/var/lib/docker/volumes/4bd9e9e016c20c4628b52416fededb25bc6f2028c30c5d4a034d73cbae56b44c/_data
+&gt;&gt; cat haproxy_0.log
+2016-... http-in webservers/server_1 ...
+2016-... http-in webservers/server_2 ...
+2016-... http-in webservers/server_3 ...
+</code></pre>
+
+<p>From the above, you can see that the load balancer sent the first request to server_1, the second request to server_2, and the final request to server_3.</p>
+
+<p>You can check real time service discovery is working by destroying some containers, then checking on consul:</p>
+
+<pre><code>&gt; docker rm -f server_1
+&gt; docker rm -f server_4
+&gt; docker rm -f simple_consul_3
+</code></pre>
+
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/Scaling-With-Docker-Part-2/consul-ui-after-killing.png" alt="VirutalBox Port Configuration" />
+        </span></p>
+    
+
+
+
+<p>Note that haproxy doesn&rsquo;t show up in the consul list because consul-template is not a typical agent - it wouldn&rsquo;t be that difficult to add it using the same technique we used for our services.</p>
+
+<h1 id="large-scale-docker">Large Scale Docker</h1>
+
+<p>Great! We&rsquo;ve got a scalable resilient docker host! You can add a few more hosts, and thus more services, using the same techniques described here. Then you can connect them by opening ports, or by using an <a href="https://docs.docker.com/engine/userguide/networking/get-started-overlay/">overlay network</a>.</p>
+
+<p>This will suit most personal projects and small to medium scale deployments. But a few issues arise when you try to take this to very large scale.</p>
+
+<h2 id="problems-with-current-solution">Problems With Current Solution</h2>
+
+<ul>
+<li>Maintenance - Maintaining a few hosts like this is manageable. Maintaining hundreds or thousands of them is not. The same goes for monitoring tens of thousands of containers.</li>
+<li>Resource Utilization - Right now we&rsquo;re not using our machines to their full potential. Maybe a service doesn&rsquo;t need an entire host? Maybe it needs multiple hosts?</li>
+<li>Localization - Because we have one service per host, it&rsquo;s hard to localize, at least without greatly increasing our maintenance overhead. Also, if a host is destroyed, we lose that entire service - there&rsquo;s no automatic recovery in the event of a fire.</li>
+</ul>
+
+<p>There are a few developing solutions to this; all of them revolve around the idea of a special set of servers that manage your containers and hosts for you. Kubernetes and Mesos seem the most popular for large scale deployments, and Docker&rsquo;s own Swarm is an easier to use tool more suited to medium sized deployments.</p>
+
+<p>Mesos and Kubernetes have two have mutually exclusive models - Mesos abstracts a set of hosts into large data centers and is very generic, whereas Kubernetes provides an opinionated management layer on top of container clusters. As a result, Kubernetes tends to be easier to use, but Mesos is more general purpose. Neither is restricted to just running Docker Containers either - both can abstract all kinds of machines. Swarm has more in common with Kubernetes than Mesos in terms of API, but it is Docker specific, and the common opinion in the scaling community is that it is not yet well suited to very large scale systems. That being said it is evolving rapidly, and it&rsquo;s worth experimenting with it if your application is not expected to reach very large scale in the near future - its ease of use may well outweigh its limitations for all but the largest deployments.</p>
+
+<p>Though Mesos and Kubernetes both have merits (every week it seems they trade first and second place), they are similar enough that I will just focus on Mesos.</p>
+
+<h1 id="mesos">Mesos</h1>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/mesos-overview/' >
+<p>Mesos lets you abstract a set of hosts into a single Megacluster. It breaks all of your hosts down into resources, and manages them for you by deciding what and where to provision. Each Host in a Mesos megacluster is a Mesos Slave. This megacluster is often called a DCOS, or Data Center Operating System.</p>
+<p>The main work is done by Mesos masters - only one is managing the cluster at a time, but there are several of them kept up to date with the system, in case one of them fails. This syncronization is done in a similar manner to our Consul servers, though it is done with [Zookeeper](https://zookeeper.apache.org/doc/trunk/zookeeperOver.html).</p>
+<p>Mesos handles deploying our containers onto our hosts for us. It determines where a container will fit based on the resources available on each host, thus using our resources more efficiently. Any container can be placed on any host.</p>
+<p>We're not limited to a single megacluster either. And since each megacluster contains every type of container, localizing our servers becomes much simpler.</p>
+</div>
+
+<p>This address each of our original concerns about large scale Docker deployments. Maintenance becomes less of an issue, since all of the hosts are now the same - they can all be provisioned the same way, and the Mesos Masters will take care of managing the contents of each host. Resource utilization is one of Mesos&rsquo; strongest points; the masters break each host into abstract resources like CPU and RAM, and create Docker Containers wherever they fit. This means if a container doesn&rsquo;t need many resources, it won&rsquo;t consume many. Finally, localization is largely resolved by simply adding more megaclusters. Each megacluster has the same configuration, and can run every type of container. This means we can have localized services wherever we need them. Plus, if one of our hosts dies, Mesos just puts those containers on different hosts.</p>
+
+<p>This convenient management of hosts takes quite an effort to configure. But once complete, the payoff is huge - some companies claim they can manage thousands of hosts and up to a hundred thousand containers on Mesos.</p>
+
+<h2 id="orchestration-and-scheduling">Orchestration and Scheduling</h2>
+
+<p>Mesos provides Orchestration of your hosts. It orchestrates it by Scheduling processes amongst the various hosts. Orchestration and Scheduling are the common ground amongst all large scale management systems.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-2/mesos-scheduling/' >
+<p>Mesos manages your hosts, by abstracting them into resources like CPU and RAM. On each Host, the Mesos Slave daemon is installed, and it's job is to keep track of the available resources on a host, reporting the available resources to the masters.</p>
+<p>The slaves periodically report their available resources. These are updated as resources are consumed and released.</p>
+<p>The masters, who track all of the resources amongst all hosts, make offers to Schedulers. The offers say what resources are available across the whole system, and a Schedulers first job is to pick the resources it wants.</p>
+<p>The Scheduler then accepts a subset of the resources, and tells the master what resources it wants and why it wants them. It tells the masters to pass a job to an Executor, who will consume the resources.</p>
+<p>The masters tell the required Executors to "execute" the jobs, which in our case means creating containers.</p>
+</div>
+
+<p>If you&rsquo;ve ever looked up Mesos and Docker, you&rsquo;ve probably also come across Marathon. The combination of a Scheduler and an Executor makes up a Mesos Framework. Marathon is a Framework specializing in long running processes, like containers.</p>
+
+<h2 id="transferring-our-services-to-mesos">Transferring our Services to Mesos</h2>
+
+<p>Implementing a Mesos system is far beyond the scope of this post. It&rsquo;s no simple task - it takes a significant time investment to get it working, and there&rsquo;s no &ldquo;standard&rdquo; way to do it yet. However, it should be clear from our discussion above where each component translates to. Here&rsquo;s a quick overview of what needs to be done:</p>
+
+<ul>
+<li>Instead of managing our Hosts with shell scripts, we&rsquo;ll be shifting that responsibility to Marathon - this might just mean moving and adjusting the scripts, depending on how you decide to implement your stack. Though it&rsquo;s simple to describe, this step will take a large portion of the time in setting up Mesos.</li>
+<li>We&rsquo;ll need to install Mesos on each of our Docker hosts to convert them into Mesos Slaves.</li>
+<li>Mesos Masters will have to be provisioned and configured with our Marathon setup. Then they need to be connected to the slaves.</li>
+<li>You&rsquo;ll have to convert some of your existing solutions to Mesos. Do you want to continue running Consul for service discovery, or switch over to Mesos DNS? In either case, configuration will have to be adjusted.</li>
+<li>You&rsquo;ll probably want to explore the other features of Mesos. Frameworks like Chronos can help you manage backups and periodic tasks, and Marathon can be used for more than just containers.</li>
+</ul>
+
+<h1 id="summary">Summary</h1>
+
+<p>We&rsquo;ve gone over deploying a service onto a docker host, scaling that service horizontally to multiple containers, load balancing them, and adding service discovery for fluid and reliable container deployments. We&rsquo;ve shown how this scales to several hosts, and where the limitations of this system are. And we&rsquo;ve overviewed how the various Orchestration frameworks, particularly Mesos, help us take our deployments to very large scales.</p>
+
+<p>Docker and the strategies for scaling it are still in their infancy - they&rsquo;re constantly evolving and improving. The best way to get a handle on them is to try them yourself, and see what works for you.</p>
+
+<p>I hope you&rsquo;ve found the example project helpful. If you want to see a more fleshed out service that utilizes all these techniques, feel free to checkout another project of mine - <a href="https://github.com/bcokert/elophant">Elophant</a>. This project is still under development, but it may answer a few questions that come up as you play with your own docker services.</p>
+
+<p>Happy Scaling!</p>
+
+    </div>
+
+    <footer>
+        <ul class="stats">
+    
+        
+
+        
+        
+            <li>
+                
+                
+                    
+
+                    
+
+                    
+                        <i class="Page(&#34;Scaling with Docker Part 2&#34;)">&nbsp; Tags</i>
+                    
+                
+            </li>
+        
+    
+
+    
+    
+        <li><a href='/tags/docker'>docker</a></li>
+    
+        <li><a href='/tags/scaling'>scaling</a></li>
+    
+        <li><a href='/tags/mesos'>mesos</a></li>
+    
+        <li><a href='/tags/containers'>containers</a></li>
+    
+        <li><a href='/tags/virtual-machines'>virtual-machines</a></li>
+    
+        <li><a href='/tags/production'>production</a></li>
+    
+        <li><a href='/tags/service-discovery'>service-discovery</a></li>
+    
+        <li><a href='/tags/consul'>consul</a></li>
+    
+        <li><a href='/tags/consul-template'>consul-template</a></li>
+    
+        <li><a href='/tags/load-balancing'>load-balancing</a></li>
+    
+        <li><a href='/tags/ha-proxy'>ha-proxy</a></li>
+    
+        <li><a href='/tags/medium-scale'>medium-scale</a></li>
+    
+        <li><a href='/tags/large-scale'>large-scale</a></li>
+    
+        <li><a href='/tags/images'>images</a></li>
+    
+</ul>
+
+    </footer>
+</article>
+<ul class="actions pagination">
+    
+        <li><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/"
+                class="button big previous">Scaling with Docker Part 1</a></li>
+    
+
+    
+        <li><a href="http://brandonokert.com/articles/json-management-patterns-in-go/"
+                class="button big next">Json Management Patterns In Go</a></li>
+    
+</ul>
+
+
+
+    
+        <article class="post">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "brandonokert" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </article>
+    
+
+
+    </div>
+    
+<section id="sidebar">
+
+    
+        <section id="intro">
+            
+            
+                
+                    <img src="http://www.gravatar.com/avatar/1796d3ceead403d9616a2093bc42ec18?s=110" width="" alt="My face" />
+                
+            
+            
+                <header>
+                    <h2>Brandon Okert</h2>
+                    <p>Husband, Full Stack Web Developer, Gopher, Runner, Coffee Lover, Book Reader, Food Maker.</p>
+                </header>
+            
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+        </section>
+
+    
+      
+        <section id="recent-posts">
+            <ul class="posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    
+                
+
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/json-management-patterns-in-go/">Json Management Patterns In Go</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-04-18'>
+                                    April 18, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/">Scaling with Docker Part 2</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-03-07'>
+                                    March 7, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/">Scaling with Docker Part 1</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-02-16'>
+                                    February 16, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/testinginreact/">Testing in React</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2015-08-04'>
+                                    August 4, 2015</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/phpmessagescheduler/">Building a Distributed Message Scheduler in PHP</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2014-07-21'>
+                                    July 21, 2014</time>
+                            </header>
+                        </article>
+                    </li>
+                
+
+                
+                    <li>
+                        <ul class="actions">
+                            <li><a href=
+                            
+                                /
+                            
+                            class="button">View more posts</a></li>
+                        </ul>
+                    </li>
+                
+            </ul>
+        </section>
+      
+
+    
+
+    
+        
+
+    
+        <section id="footer">
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+
+            <p class="copyright">&copy; BrandonOkert.com. Powered by <a href="//gohugo.io" target="_blank">Hugo</a></p>
+        </section>
+
+</section>
+
+            </div>
+        <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+        
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/util.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/backToTop.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+
+        
+            <script src="/js/sequenced-image.js"></script>
+        
+
+            
+            <script>hljs.initHighlightingOnLoad();</script>
+            
+    </body>
+</html>
+

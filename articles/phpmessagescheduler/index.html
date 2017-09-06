@@ -1,0 +1,921 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    
+      
+        <title>Building a Distributed Message Scheduler in PHP</title>
+      
+    
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Hugo 0.26" />
+    
+    
+        
+    
+
+    
+
+    <link rel="apple-touch-icon-precomposed"
+        href='/favicon/apple-touch-icon-precomposed.png'>
+    <link rel="icon" href='/favicon/favicon.png'>
+    
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage"
+        content='/favicon/mstile.png'>
+
+
+
+    
+      <meta name="author" content="Brandon Okert">
+    
+    
+      <meta name="description" content="How I made a simple message scheduler on the weekend">
+    
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Building a Distributed Message Scheduler in PHP"/>
+<meta name="twitter:description" content="How I made a simple message scheduler on the weekend"/>
+<meta name="twitter:site" content="@BrandonOkert"/>
+
+    <meta property="og:title" content="Building a Distributed Message Scheduler in PHP" />
+<meta property="og:description" content="How I made a simple message scheduler on the weekend" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://brandonokert.com/articles/phpmessagescheduler/" />
+
+
+
+<meta property="article:published_time" content="2014-07-21T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2014-07-21T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+<meta itemprop="name" content="Building a Distributed Message Scheduler in PHP">
+<meta itemprop="description" content="How I made a simple message scheduler on the weekend">
+
+
+<meta itemprop="dateModified" content="2014-07-21T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="589">
+
+
+
+<meta itemprop="keywords" content="php,micro-service,project,message-scheduler," />
+
+    
+
+    
+
+    <link rel="stylesheet" href="/css/google-font.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/add-on.css" />
+    <link rel="stylesheet" href="/css/monokai-sublime.css">
+
+    
+      <link rel="stylesheet" href="/css/custom.css" />
+    
+
+    
+    
+    
+      
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66027344-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+    
+  </head>
+  <body>
+
+    
+    <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+        <h2><a href="/">Brandon Okert</i></a></h2>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                        
+                            <i class="fa fa-file-text-o">&nbsp;</i>Articles
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/tags/">
+                        
+                            <i class="fa fa-tags">&nbsp;</i>Tags
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                        
+                            <i class="fa fa-question-circle-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="q" value="site:http://brandonokert.com/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="q" value="site:http://brandonokert.com/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                
+                                    <i class="fa fa-file-text-o">&nbsp;</i>
+                                
+                                Articles
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/tags/">
+                            <h3>
+                                
+                                    <i class="fa fa-tags">&nbsp;</i>
+                                
+                                Tags
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                
+                                    <i class="fa fa-question-circle-o">&nbsp;</i>
+                                
+                                About
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/json-management-patterns-in-go/"><p>Json Management Patterns In Go</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"><p>Scaling with Docker Part 2</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-1/"><p>Scaling with Docker Part 1</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/testinginreact/"><p>Testing in React</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/phpmessagescheduler/"><p>Building a Distributed Message Scheduler in PHP</p></a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&text=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+    <header>
+    <div class="title">
+        
+            <h1><a href="http://brandonokert.com/articles/phpmessagescheduler/">Building a Distributed Message Scheduler in PHP</a></h1>
+            
+        
+        
+            <p>How I made a simple message scheduler on the weekend</p>
+        
+    </div>
+    <div class="meta">
+        
+            
+        
+
+        <time class="published"
+            datetime='2014-07-21'>
+            July 21, 2014</time>
+        <span class="author">Brandon Okert</span>
+        
+        
+    </div>
+</header>
+
+
+    <section id="social-share">
+        <ul class="icons">
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&text=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f&title=Building%20a%20Distributed%20Message%20Scheduler%20in%20PHP" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fphpmessagescheduler%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+    
+    
+
+    
+        
+        
+
+
+
+
+    
+
+
+        
+
+        <a href="http://brandonokert.com/articles/phpmessagescheduler/" class="image featured">
+            <img src="/img/PHPMessageScheduler//DispatcherInterface.png" alt="" />
+        </a>
+    
+
+
+    <div id="content">
+        
+
+<p>Guten Tag!</p>
+
+<p>This weekend I build a little distributed message scheduler. I was recently motivated to learn PHP, and given a recent discussion at work, a message scheduler seemed the way to go. It fit the bill - not only would I be able to use php in a production-like setting, but I would also improve my fluency with distributed systems in general. It was also something I could get done in a reasonably short time - an important trait for an over-eager project starter like me.</p>
+
+<h2 id="pic-or-it-didn-t-happen">Pic or it Didn&rsquo;t Happen</h2>
+
+<p>This is what it looked like this morning:</p>
+
+<p>The Main Server:</p>
+
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/PHPMessageScheduler/MainInterface.png" alt="The Main Server Interface" />
+        </span></p>
+    
+
+
+
+<p>Scheduled Messages:</p>
+
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/PHPMessageScheduler/DispatcherInterface.png" alt="The Dispatcher Server Interface" />
+        </span></p>
+    
+
+
+
+<p>Check out the <a href="https://github.com/bcokert/psched-main">Main Server</a> and <a href="https://github.com/bcokert/psched-dispatcher">Dispatcher</a> on Github.</p>
+
+<h2 id="what-is-a-distributed-message-scheduler">What is a &ldquo;Distributed Message Scheduler&rdquo;?</h2>
+
+<p>Sites like Facebook and Twitter capitalize on the concept of <em>posts</em>. A post is basically some text (including links to images, videos, etc.) with an associated poster and post time. A message scheduler in this context is just a system that posts messages at a certain time on behalf of a certain poster.</p>
+
+<p>If you&rsquo;re interested in learning php, or just want to build a reasonable complex system in a relatively short amount of time, a message scheduler is an excellent option. The distributed part is just a bonus that nets you extra scalabiltiy, without it becoming a &ldquo;build Facebook&rdquo; sized project.</p>
+
+<p>The multi-server architecture is a little overkill for a personal project, but you can&rsquo;t learn to drive a car if you only play with <a href="http://en.wikipedia.org/wiki/Hot_Wheels">Hot Wheels</a>.</p>
+
+<p>In the real world, it would be computationally infeasable to run both your social site <em>and</em> your message scheduler on the same machine. In a distributed system, your Main Server can take care of things that are already posted, and another server, a <em>Dispatcher</em>, can store all the posts to be posted down the road. In a really big system, you could have 1000 Main Servers, each with a pool of Dispatchers.</p>
+
+<h2 id="how-long-did-this-take">How Long Did This Take?</h2>
+
+<p>It took me three days, spending about 6 hours each day.</p>
+
+<p>Day one I put together the two servers I&rsquo;d be using - Installing Ubuntu, installing software, setting up a development environment, setting up <a href="http://en.wikipedia.org/wiki/Apache_HTTP_Server">Apache</a>, etc. I also coded most of the Main Server&rsquo;s interface.</p>
+
+<p>Day two I finished off the interface, then went to work setting up and testing <a href="http://en.wikipedia.org/wiki/MySQL">mysql databases</a>. The main database stores posted posts, and the dispatcher&rsquo;s database stores scheduled posts. I also wrote the various php endpoints that allow posting and scheduling of messages.</p>
+
+<p>Day three was setting up the Dispatcher to automatically post scheduled posts at the right time. Php on the command line was used here, with a little help from <a href="http://en.wikipedia.org/wiki/Cron">Cron</a>. Then it was all testing and polishing, until 18 hours later I had a working system.</p>
+
+<h2 id="gimme-architecture">Gimme Architecture</h2>
+
+<p>The main server provides two services to the external world: postMessage.php and scheduleMessage.php. The Dispatcher Server provides two corresponding services. Internally, scheduleMessage.php on the Main Server just posts data to the local Dispatcher, and similarly the Dispatcher just forwards data to postMessage.php on the Main Server. Also external is a basic interface for the Main Server, which provides a scheduling form, and a feed viewer.</p>
+
+<p>On the Dispatcher, cron runs every minute, checking the scheduled messages for posts that need to go out. Any it finds are deleted from the Dispatcher&rsquo;s database, then forwarded to the Main Server. The Dispatcher also has a basic interface that allows checking on the scheduled messages.</p>
+
+<p>This image has all the nitty gritty details, and you can find more on <a href="https://github.com/bcokert">Github</a>.
+
+
+
+    
+    
+        
+        
+        
+            
+        
+        
+            
+        
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+
+    
+
+
+    
+
+    
+        <p><span class="image center-image">
+            <img src="/img/PHPMessageScheduler/PschedArchitecture.jpg" alt="System Architecture" />
+        </span></p>
+    
+
+</p>
+
+    </div>
+
+    <footer>
+        <ul class="stats">
+    
+        
+
+        
+        
+            <li>
+                
+                
+                    
+
+                    
+
+                    
+                        <i class="Page(&#34;Building a Distributed Message Scheduler in PHP&#34;)">&nbsp; Tags</i>
+                    
+                
+            </li>
+        
+    
+
+    
+    
+        <li><a href='/tags/php'>php</a></li>
+    
+        <li><a href='/tags/micro-service'>micro-service</a></li>
+    
+        <li><a href='/tags/project'>project</a></li>
+    
+        <li><a href='/tags/message-scheduler'>message-scheduler</a></li>
+    
+</ul>
+
+    </footer>
+</article>
+<ul class="actions pagination">
+    
+        <li><a href="http://brandonokert.com/articles/firstpost/"
+                class="button big previous">First Post!</a></li>
+    
+
+    
+        <li><a href="http://brandonokert.com/articles/testinginreact/"
+                class="button big next">Testing in React</a></li>
+    
+</ul>
+
+
+
+    
+        <article class="post">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "brandonokert" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </article>
+    
+
+
+    </div>
+    
+<section id="sidebar">
+
+    
+        <section id="intro">
+            
+            
+                
+                    <img src="http://www.gravatar.com/avatar/1796d3ceead403d9616a2093bc42ec18?s=110" width="" alt="My face" />
+                
+            
+            
+                <header>
+                    <h2>Brandon Okert</h2>
+                    <p>Husband, Full Stack Web Developer, Gopher, Runner, Coffee Lover, Book Reader, Food Maker.</p>
+                </header>
+            
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+        </section>
+
+    
+      
+        <section id="recent-posts">
+            <ul class="posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    
+                
+
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/json-management-patterns-in-go/">Json Management Patterns In Go</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-04-18'>
+                                    April 18, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/">Scaling with Docker Part 2</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-03-07'>
+                                    March 7, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/">Scaling with Docker Part 1</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-02-16'>
+                                    February 16, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/testinginreact/">Testing in React</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2015-08-04'>
+                                    August 4, 2015</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/phpmessagescheduler/">Building a Distributed Message Scheduler in PHP</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2014-07-21'>
+                                    July 21, 2014</time>
+                            </header>
+                        </article>
+                    </li>
+                
+
+                
+                    <li>
+                        <ul class="actions">
+                            <li><a href=
+                            
+                                /
+                            
+                            class="button">View more posts</a></li>
+                        </ul>
+                    </li>
+                
+            </ul>
+        </section>
+      
+
+    
+
+    
+        
+
+    
+        <section id="footer">
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+
+            <p class="copyright">&copy; BrandonOkert.com. Powered by <a href="//gohugo.io" target="_blank">Hugo</a></p>
+        </section>
+
+</section>
+
+            </div>
+        <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+        
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/util.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/backToTop.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+
+        
+            <script src="/js/sequenced-image.js"></script>
+        
+
+            
+            <script>hljs.initHighlightingOnLoad();</script>
+            
+    </body>
+</html>
+

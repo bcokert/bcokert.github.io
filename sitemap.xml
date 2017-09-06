@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://brandonokert.com/about/</loc>
+    <lastmod>2017-09-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/json-management-patterns-in-go/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/scaling-with-docker-part-2/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/scaling-with-docker-part-1/</loc>
+    <lastmod>2016-02-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/testinginreact/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/phpmessagescheduler/</loc>
+    <lastmod>2014-07-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/firstpost/</loc>
+    <lastmod>2014-07-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/articles/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/</loc>
+    <lastmod>2017-09-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/consul/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/consul-template/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/containers/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/coverage/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/docker/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/first/</loc>
+    <lastmod>2014-07-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/go/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/golang/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/ha-proxy/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/images/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/introduction/</loc>
+    <lastmod>2014-07-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/jasmine/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/javascript/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/json/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/karma/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/large-scale/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/load-balancing/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/medium-scale/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/mesos/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/message-scheduler/</loc>
+    <lastmod>2014-07-21T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/micro-service/</loc>
+    <lastmod>2014-07-21T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/mocking/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/patterns/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/php/</loc>
+    <lastmod>2014-07-21T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/production/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/project/</loc>
+    <lastmod>2014-07-21T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/react/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/rest/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/rewire/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/scaling/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/service-discovery/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/testing/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/unittest/</loc>
+    <lastmod>2015-08-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/validation/</loc>
+    <lastmod>2016-04-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://brandonokert.com/tags/virtual-machines/</loc>
+    <lastmod>2016-03-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

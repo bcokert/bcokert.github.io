@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Coverage on BrandonOkert.com</title>
+    <link>http://brandonokert.com/tags/coverage/</link>
+    <description>Recent content in Coverage on BrandonOkert.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 04 Aug 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://brandonokert.com/tags/coverage/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Testing in React</title>
+      <link>http://brandonokert.com/articles/testinginreact/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/testinginreact/</guid>
+      <description>Having recently been tasked with bringing our JS test coverage in React to &amp;gt;85%, I was surprised to find that there are scant resources for actually testing React components thoroughly. There are a few Test Utilities and getting started guides, but few examples to draw from for for in depth coverage. What do I do when I need to test a change in state resulting from a sequence of user actions?</description>
+    </item>
+    
+  </channel>
+</rss>

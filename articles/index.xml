@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Articles on BrandonOkert.com</title>
+    <link>http://brandonokert.com/articles/</link>
+    <description>Recent content in Articles on BrandonOkert.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 18 Apr 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://brandonokert.com/articles/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Json Management Patterns In Go</title>
+      <link>http://brandonokert.com/articles/json-management-patterns-in-go/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/json-management-patterns-in-go/</guid>
+      <description>Managing Json in Go is not a trivial problem. There are many examples out there of how to decode a simple json document into a struct, but few that answer the questions that inevitably come up:
+ How do I provide defaults for fields? How do I make a field optional? How do I avoid using defaults for certain fields (eg: a user id)? How do I prevent pointer maintenance issues down the road?</description>
+    </item>
+    
+    <item>
+      <title>Scaling with Docker Part 2</title>
+      <link>http://brandonokert.com/articles/scaling-with-docker-part-2/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/scaling-with-docker-part-2/</guid>
+      <description>This is the second in a two part blog about Scaling with Docker. In this part, we&amp;rsquo;ll take what we learned in Part 1 and use it to create a scalable and resilient service with Docker. While the previous part took a more conceptual route, this part will focus more on practical applications. At each stage we&amp;rsquo;ll update a set of scripts to automate building and deploying, and go through a few tests to get familiar with the results.</description>
+    </item>
+    
+    <item>
+      <title>Scaling with Docker Part 1</title>
+      <link>http://brandonokert.com/articles/scaling-with-docker-part-1/</link>
+      <pubDate>Tue, 16 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/scaling-with-docker-part-1/</guid>
+      <description>This is the first in a two part post about Scaling with Docker. In Part 1, we&amp;rsquo;ll focus on getting started with Docker from a scaling perspective. For the most part this will be an intro to Docker, so if you&amp;rsquo;re already experienced using mutli-container hosts, docker networks, volume containers, monitoring tools, and management scripts, feel free to skim this part. In Part 2, we&amp;rsquo;ll use the fundamentals from Part 1 to organize scalable multi-host systems, then show where to start to take that to very large scale applications.</description>
+    </item>
+    
+    <item>
+      <title>Testing in React</title>
+      <link>http://brandonokert.com/articles/testinginreact/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/testinginreact/</guid>
+      <description>Having recently been tasked with bringing our JS test coverage in React to &amp;gt;85%, I was surprised to find that there are scant resources for actually testing React components thoroughly. There are a few Test Utilities and getting started guides, but few examples to draw from for for in depth coverage. What do I do when I need to test a change in state resulting from a sequence of user actions?</description>
+    </item>
+    
+    <item>
+      <title>Building a Distributed Message Scheduler in PHP</title>
+      <link>http://brandonokert.com/articles/phpmessagescheduler/</link>
+      <pubDate>Mon, 21 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/phpmessagescheduler/</guid>
+      <description>Guten Tag!
+This weekend I build a little distributed message scheduler. I was recently motivated to learn PHP, and given a recent discussion at work, a message scheduler seemed the way to go. It fit the bill - not only would I be able to use php in a production-like setting, but I would also improve my fluency with distributed systems in general. It was also something I could get done in a reasonably short time - an important trait for an over-eager project starter like me.</description>
+    </item>
+    
+    <item>
+      <title>First Post!</title>
+      <link>http://brandonokert.com/articles/firstpost/</link>
+      <pubDate>Sun, 13 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/firstpost/</guid>
+      <description>What&amp;rsquo;s the meaning of life? Where do babies come from? How to I make the perfect app?
+You may or may not find all the answers inside. But you&amp;rsquo;ll never know if you don&amp;rsquo;t keep reading!
+Thumbnail image from xkcd.com.</description>
+    </item>
+    
+  </channel>
+</rss>

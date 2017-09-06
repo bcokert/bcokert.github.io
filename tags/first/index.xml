@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>First on BrandonOkert.com</title>
+    <link>http://brandonokert.com/tags/first/</link>
+    <description>Recent content in First on BrandonOkert.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 13 Jul 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://brandonokert.com/tags/first/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>First Post!</title>
+      <link>http://brandonokert.com/articles/firstpost/</link>
+      <pubDate>Sun, 13 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/articles/firstpost/</guid>
+      <description>What&amp;rsquo;s the meaning of life? Where do babies come from? How to I make the perfect app?
+You may or may not find all the answers inside. But you&amp;rsquo;ll never know if you don&amp;rsquo;t keep reading!
+Thumbnail image from xkcd.com.</description>
+    </item>
+    
+  </channel>
+</rss>

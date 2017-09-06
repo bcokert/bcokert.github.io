@@ -1,0 +1,1006 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    
+      
+        <title>Scaling with Docker Part 1</title>
+      
+    
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Hugo 0.26" />
+    
+    
+        
+    
+
+    
+
+    <link rel="apple-touch-icon-precomposed"
+        href='/favicon/apple-touch-icon-precomposed.png'>
+    <link rel="icon" href='/favicon/favicon.png'>
+    
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage"
+        content='/favicon/mstile.png'>
+
+
+
+    
+      <meta name="author" content="Brandon Okert">
+    
+    
+      <meta name="description" content="Getting started with Docker, from a Scaling Perspective">
+    
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Scaling with Docker Part 1"/>
+<meta name="twitter:description" content="Getting started with Docker, from a Scaling Perspective"/>
+<meta name="twitter:site" content="@BrandonOkert"/>
+
+    <meta property="og:title" content="Scaling with Docker Part 1" />
+<meta property="og:description" content="Getting started with Docker, from a Scaling Perspective" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://brandonokert.com/articles/scaling-with-docker-part-1/" />
+
+
+
+<meta property="article:published_time" content="2016-02-16T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2016-02-16T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+<meta itemprop="name" content="Scaling with Docker Part 1">
+<meta itemprop="description" content="Getting started with Docker, from a Scaling Perspective">
+
+
+<meta itemprop="dateModified" content="2016-02-16T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3831">
+
+
+
+<meta itemprop="keywords" content="docker,scaling,mesos,containers,virtual-machines,production,service-discovery,consul,consul-template,load-balancing,ha-proxy,medium-scale,large-scale,images," />
+
+    
+
+    
+
+    <link rel="stylesheet" href="/css/google-font.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/add-on.css" />
+    <link rel="stylesheet" href="/css/monokai-sublime.css">
+
+    
+      <link rel="stylesheet" href="/css/custom.css" />
+    
+
+    
+    
+    
+      
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66027344-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+    
+  </head>
+  <body>
+
+    
+    <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+        <h2><a href="/">Brandon Okert</i></a></h2>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                        
+                            <i class="fa fa-file-text-o">&nbsp;</i>Articles
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/tags/">
+                        
+                            <i class="fa fa-tags">&nbsp;</i>Tags
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                        
+                            <i class="fa fa-question-circle-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="q" value="site:http://brandonokert.com/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="q" value="site:http://brandonokert.com/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                
+                                    <i class="fa fa-file-text-o">&nbsp;</i>
+                                
+                                Articles
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/tags/">
+                            <h3>
+                                
+                                    <i class="fa fa-tags">&nbsp;</i>
+                                
+                                Tags
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                
+                                    <i class="fa fa-question-circle-o">&nbsp;</i>
+                                
+                                About
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/json-management-patterns-in-go/"><p>Json Management Patterns In Go</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"><p>Scaling with Docker Part 2</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/scaling-with-docker-part-1/"><p>Scaling with Docker Part 1</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/testinginreact/"><p>Testing in React</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="http://brandonokert.com/articles/phpmessagescheduler/"><p>Building a Distributed Message Scheduler in PHP</p></a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&text=Scaling%20with%20Docker%20Part%201&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+    <header>
+    <div class="title">
+        
+            <h1><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/">Scaling with Docker Part 1</a></h1>
+            
+        
+        
+            <p>Getting started with Docker, from a Scaling Perspective</p>
+        
+    </div>
+    <div class="meta">
+        
+            
+        
+
+        <time class="published"
+            datetime='2016-02-16'>
+            February 16, 2016</time>
+        <span class="author">Brandon Okert</span>
+        
+        
+    </div>
+</header>
+
+
+    <section id="social-share">
+        <ul class="icons">
+            
+
+
+<li><a href="//twitter.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&text=Scaling%20with%20Docker%20Part%201&via=BrandonOkert" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f&title=Scaling%20with%20Docker%20Part%201" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Brandon%20Okert&body=http%3a%2f%2fbrandonokert.com%2farticles%2fscaling-with-docker-part-1%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+    
+    
+
+    
+        
+        
+
+
+
+
+    
+
+
+        
+
+        <a href="http://brandonokert.com/articles/scaling-with-docker-part-1/" class="image featured">
+            <img src="/img/Scaling-With-Docker-Part-1//docker-thumb.png" alt="" />
+        </a>
+    
+
+
+    <div id="content">
+        
+
+<p>This is the first in a two part post about Scaling with Docker. In Part 1, we&rsquo;ll focus on getting started with Docker from a scaling perspective. For the most part this will be an intro to Docker, so if you&rsquo;re already experienced using mutli-container hosts, docker networks, volume containers, monitoring tools, and management scripts, feel free to skim this part. In Part 2, we&rsquo;ll use the fundamentals from Part 1 to organize scalable multi-host systems, then show where to start to take that to very large scale applications.</p>
+
+<h1 id="getting-started">Getting Started</h1>
+
+<p>Rather than telling you what Docker is and why you should use it, I&rsquo;m going to start by comparing Docker to Virtual Machines, which are much more familiar. Then we&rsquo;ll jump into the what and how of Docker.</p>
+
+<h2 id="docker-vs-vm-s">Docker VS VM&rsquo;s</h2>
+
+<p>From a system architecture perspective, a Container and a Virtual Machine are interchangeable - they both implement a host, or an environment that you can run processes and services within. However, the different implementations result in different Performance and Lifecycles.</p>
+
+<h3 id="performance">Performance</h3>
+
+<p>Let&rsquo;s compare the architecture of Virtual Machines to that of Containers. Click the arrows to cycle through the stages of the diagram.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-1/docker-and-vms/' >
+<p>On the left is a VM Host, on the right, a Container Host.</p>
+<p>Both have an underlying operating system.</p>
+<p>Both have common libraries and programs available.</p>
+<p>Both need a Manager of their guests - Hypervisor for VM's and Docker Engine for Docker.</p>
+<p>Since Virtual Machines are meant to be their namesake, they need their own Guest Operating System.</p>
+<p>They also need the base libraries for the operating system - likely a huge overlap with what's already on the Host.</p>
+<p>Finally, both have the actual application code to run. This includes any dependencies or other libraries installed.</p>
+</div>
+
+<p>As you can see, Docker containers tend to be much smaller than equivalent VM&rsquo;s, and slightly faster due to being closer to the host operating system. Under the hood, containers use linux <a href="http://man7.org/linux/man-pages/man7/namespaces.7.html">namespaces</a> and <a href="https://en.wikipedia.org/wiki/Cgroups">cgroups</a> rather than virtual environments, thus removing a layer of abstraction.</p>
+
+<h3 id="lifecycle">Lifecycle</h3>
+
+<p>A VM is normally created at one point, then maintained via regular provisioning and deployment of services. You place new applications onto the existing box when it&rsquo;s time to update, and log in to the box to monitor, maintain, and debug it.</p>
+
+<p>Containers have a very different lifecycle. Containers are not provisioned; instead you build images that contain your application and configuration, then &ldquo;deploy&rdquo; these images as container instances. If there are application or configuration changes, you build a new image, destroy your old containers, and create new ones with the new image.</p>
+
+<p>Thus where VM&rsquo;s typically live for a long time, changing throughout their life, containers are meant to be relatively short lived. This encourages the prevailing trend of keeping containers small, and helps avoid snowflakes (servers that have diverged from their provisioned state).</p>
+
+<h2 id="docker-components-at-scale">Docker Components at Scale</h2>
+
+<p>We&rsquo;ll talk about the <em>how</em> of scaling in Part 2, and dive into the architecture of Docker in the next section. But as a quick overview, these are the main actors in a scaled docker deployment:</p>
+
+<ul>
+<li>Containers - Comparable to VM&rsquo;s, these are the basic building blocks of docker deployments, making up our services.</li>
+<li>Docker Hosts - Containers need somewhere to live, and that somewhere is Docker Hosts. These are linux machines that run one or more containers.</li>
+<li>Clusters - A group of Docker Hosts make a cluster. The term cluster is also used synonymously with the tools used to maintain them.</li>
+</ul>
+
+<h1 id="docker-architecture">Docker Architecture</h1>
+
+<p>Docker systems are made up of a main tool called the Docker Engine, a collection of tools called the Docker Toolbox, and several container related components. You can <a href="https://www.docker.com/products/docker-toolbox">install the toolbox for osx and windows</a>, or <a href="https://docs.docker.com/engine/installation/linux/">just the Docker Engine package</a> on a linux based system.</p>
+
+<p>In this section we&rsquo;ll go over these <a href="#tools">Tools</a> and <a href="#components">Components</a> and where they fit, before touching on the prevailing <a href="#docker-ideologies">Docker Ideologies</a>.</p>
+
+<h2 id="components">Components</h2>
+
+<h3 id="containers">Containers</h3>
+
+<p>Containers have already been introduced - they are the basic building blocks of docker deployments. Containers can be created, destroyed, run, stopped, restarted, and logged into (though the latter is usually avoided). See the <a href="#dockerfiles">Dockerfiles</a> section for more info.</p>
+
+<p>Though they are architecturally used like a VM, their implementation is closer to a directory. <a href="http://man7.org/linux/man-pages/man7/namespaces.7.html">Linux Namespaces</a> and <a href="https://en.wikipedia.org/wiki/Cgroups">cgroups</a> provide the isolation and limitation to these &ldquo;directories&rdquo; that allow them to act like VM&rsquo;s.</p>
+
+<p>As a folder, the simplest containers are just a couple files, isolated from the rest of the system. Because Linux based operating systems are essentially just many files, a more complex container is like the root folder of a typical system. Many of these files can actually be shared from the host operating system, such as basic binaries and libraries. The cgroups and namespaces also let these files be executed in their own isolated context. Thus a container can run an ssh daemon, and be logged into, and <a href="http://blog.scottlowe.org/2013/11/25/a-brief-introduction-to-linux-containers-with-lxc/">LXC</a> is responsible for making it appear as if it is a completely separate system.</p>
+
+<p>From a usage point of view, consider Containers to be miniature Virtual Machines. From an implementation point of view, consider them to be isolated directories and processes, together with a manger that helps with things like port forwarding.</p>
+
+<h3 id="images">Images</h3>
+
+<p>Images are like templates or blueprints for creating containers. After you&rsquo;ve built an image using a <a href="#dockerfiles">Dockerfile</a>, put that image in a <a href="#registry">Registry</a>, and downloaded it, you can keep using it to create any number of containers. See the <a href="#dockerfiles">Dockerfiles</a> section for more info.</p>
+
+<p>Images are made of a series of layers that have a similar function to commits in git. Under the hood, they use a <a href="https://en.wikipedia.org/wiki/UnionFS">Union Filesystem</a> to iteratively build up the filesystems that become your containers.</p>
+
+<h3 id="dockerfiles">Dockerfiles</h3>
+
+<p>Dockerfiles specify how to build <a href="#images">Images</a>. As a Dockerfile (and the underlying application) evolves, so does the resulting image. A Dockerfile is a series of commands specifying a starting point for your containers, and the libraries, dependencies, and configuration your image needs to run.</p>
+
+<p>Dockerfiles are only concerned with single images - they may specify open ports, but they do not specify other container types or networks to connect to. That is done with <a href="#docker-engine">Docker Engine</a>.</p>
+
+<p>Each command in a Dockerfile creates a new layer, or commit. This is similar to how git creates a commit, recording the differential from the last commit. A complete image is a series of commits starting from a base.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-1/images-and-dockerfiles/' >
+<p>On the right is our Dockerfile. On the left, the image made from it.</p>
+<p>The first command is always a FROM command. You specify a base image here to get a default set of libraries and configuration, for a specific platform. You can also specify scratch as a base image, meaning that no files and configuration will be installed.</p>
+<p>The next commands are to setup the dependencies of your runtime. This is no different from the steps you'd run in a provisioner, like Ansible. You might also get some of your dependencies from the base image itself. There's a java:8 base image for example, as well as a consul one.</p>
+<p>Next you install your app itself, as well as any local configuration. This is the deploy artifact you generate via your build tools.</p>
+<p>After this, you can do any container specific setup. Open ports, setup environment variables, mount volumes, anything. Ideally you'll keep the number of commands to a minimum, as each command creates a new layer in your image.</p>
+<p>Once you've created, pushed up, and pulled down an image, you can create a container via the docker run command. The path to init script would have been copied over when you installed the application artifact.</p>
+</div>
+
+<h3 id="docker-hosts">Docker Hosts</h3>
+
+<p>Containers cannot live in isolation - they are run on hosts. A Docker Host is just a linux machine (virtual or otherwise) that is running Docker Engine.</p>
+
+<p>For small deployments, Docker Hosts are managed manually. For larger deployments, they are abstracted into clusters and managed piecemeal.</p>
+
+<p>Docker Hosts are easy to understand if you convert a VM server into a Docker Host.</p>
+
+<div class='sequenced-image' data-base='/img/Scaling-With-Docker-Part-1/converting-to-docker/' >
+<p>On the left is a typical server, perhaps on a VM. It's running a web service and database daemon, and storing data in some directory.</p>
+<p>First we install Docker Engine, thus converting our Host on the right into a Docker Host.</p>
+<p>Then we convert each of the processes on the left into Containers. This is a common theme - typically we want one main process per container.</p>
+<p>Our data comes over as a Volume. This is functionally the same as before, but now the volume lives on the Host, and is mounted into each Container. This enables the data to persist beyond the life of a container, and enables sharing of data. This can be done in a read only fashion.</p>
+<p>Architecturally these hosts are nearly identical, thus we call the one on the right a Docker Host.</p>
+</div>
+
+<h3 id="volumes">Volumes</h3>
+
+<p>Volumes are the persistent storage solution for Docker. They are used heavily to ensure data persists after a container is destroyed - you may destroy and rebuild your database container many times a day, but you don&rsquo;t want to destroy the actual data. By putting the data in a volume, then mounting the volume into your container, the data is persisted between iterations of the container.</p>
+
+<p>Volumes can also enable sharing of data, in the case of configuration for example. You can mount them read only to ensure data is only mutated by an administrator.</p>
+
+<p>Under the hood, mounting a volume is like mounting a device in vanilla linux. Just like a linux machine, and thus a container, is like a big root folder, mounting a Volume in a container is like mounting a folder from a different device into that system. You mount from a source to a destination, so if you have a volume called /syslog.config you could mount it into your container at /etc/syslog/config.d. Semantically, this is similar to the unix command <code>mount /dev/dev1/syslog.config &ndash;target /etc/syslog/confid.d</code>.</p>
+
+<p>A common pattern with Volumes is to create Volume Containers. A Volume Container is just a container who&rsquo;s sole purpose is to mount one or more volumes. You can then instruct other containers to mount all volumes mounted by the Volume Container, thus making it easy to maintain a set of volumes that is shared across many containers, such as syslog configuration. In addition, Volume Containers make it harder to accidentally delete volumes, since the docker daemon won&rsquo;t allow you to delete a volume if at least one container is using it. Volume Containers have no mutating functionality, and thus should not need to be destroyed very often.</p>
+
+<p>For example, you might mount <code>/var/data/service</code>, <code>/var/log/service</code>, and <code>/var/etc/service</code> to a Volume Container. Then you can simply tell your database container to mount any volume in your Volume Container.</p>
+
+<h3 id="networks">Networks</h3>
+
+<p>If you&rsquo;re familiar with older iterations of Docker, you may still not be familiar with Docker Networks. Docker Networks are a solution to connecting multiple containers in a private network. Previously you had to open ports manually and connect containers, or use docker links to inject the ip address and ports of containers into others via environment variables. It was not fun to maintain, even on small scale projects.</p>
+
+<p>With networks, this process is much easier. You create networks independent from containers, specifying a global name to refer to them. Then you just tell docker containers to join them when they&rsquo;re created.</p>
+
+<p>In Docker 1.9, this would cause the hostname and ip of all containers on a network to be injected into each containers hosts file. Thus you could easily communicate between containers by name.</p>
+
+<p>Docker 1.10 improves upon this by providing a full local dns system for your containers. Docker Engine runs a dns server, which is the first server all containers will go to for addresses, and this server contains the other containers on the network. If a host is not found on this server, the request is forward to the next highest dns server, as expected with dns. This is a huge improvement over the hosts file solution, as it plays nicely with other name resolution techniques that we&rsquo;ll see in Part 2.</p>
+
+<p>Networks are a surprisingly big topic in Docker (considering they didn&rsquo;t exist until 1.9), but we&rsquo;ll be making use of them in Part 2.</p>
+
+<h2 id="tools">Tools</h2>
+
+<h3 id="docker-engine">Docker Engine</h3>
+
+<p>When most people think of Docker, Docker Engine is what they&rsquo;re really referring to. This is the <em>docker daemon</em>, the tool-set responsible for running containers. Because docker depends on <a href="http://man7.org/linux/man-pages/man7/namespaces.7.html">namespaces</a> and <a href="https://en.wikipedia.org/wiki/Cgroups">cgroups</a> (and other linux kernel features), it is always installed on a linux kernel system. This system is usually called a Docker Host.</p>
+
+<p>Technically you don&rsquo;t interact with the daemon itself; you interact with the docker binary client, who relays commands to the daemon. However, the two are typically used interchangeably.</p>
+
+<p>If you have an actual VM or box running linux, Docker Engine is all you need to get started. If you&rsquo;re running docker on osx or windows, you&rsquo;ll need a linux VM to run Docker Engine.</p>
+
+<h3 id="docker-toolbox">Docker Toolbox</h3>
+
+<p>Docker toolbox include a fairly large number of tools, most of which can be used regardless of your environment.</p>
+
+<p>I&rsquo;ll only go over the ones you&rsquo;re likely to see often here. You can check out the whole catalogue <a href="https://www.docker.com/products/docker-toolbox">here</a>.</p>
+
+<h4 id="docker-machine">Docker Machine</h4>
+
+<p>Docker Machine is your docker host management agent. Its sole purpose is to manage docker host VM&rsquo;s on non-linux environments. Like <a href="https://www.vagrantup.com/">Vagrant</a>, it is basically a UI on top of a Virtual Machine manager like <a href="https://www.virtualbox.org/">Virtualbox</a>. It provides many commands for managing docker hosts, and can even setup proxies from your terminal to a specific docker host so that you can interact directly with Docker Engine without having to ssh into the host itself.</p>
+
+<p>Docker Machine is powerful; you can simulate complex production-like multi-host docker deployments on a single laptop (if you have the RAM for it). This makes it possible to have an entirely local staging environment on your development machine to test with.</p>
+
+<h4 id="docker-registry">Docker Registry</h4>
+
+<p>Once you&rsquo;ve built images, you need a place to put them. For a while, Docker Hub will be that place. Docker Hub is just like Git Hub, but instead of storing projects, you&rsquo;re storing images. The similarities don&rsquo;t stop there - images are actually made up of a series of commits, like Git Hub projects. But more on that later.</p>
+
+<p>Docker Registry is the server system that runs repositories like Docker Hub. It&rsquo;s typically used by organizations so that they can store their images privately, and without uploading them to Docker Hub (which often takes a while). You can also setup local registries for personal use, though I won&rsquo;t dig into this much further.</p>
+
+<h4 id="docker-compose">Docker Compose</h4>
+
+<p>Docker Compose is docker&rsquo;s multi-container deployment scripting solution. It&rsquo;s similar to a <a href="https://www.vagrantup.com/docs/vagrantfile/">Vagrant File</a> or <a href="http://docs.ansible.com/ansible/playbooks.html">Ansible Playbook</a>, but for multiple containers.</p>
+
+<p>Throughout both parts of this tutorial, I will be using vanilla Bash scripts instead of Docker Compose, as they give a clear and un-adulterated view into what&rsquo;s going on, and give you a lot of control. After you understand what&rsquo;s going on though, feel free to experiment replacing your scripts with compose files.</p>
+
+<p>I&rsquo;ve historically avoided using Docker Compose due to technical limitations. However, Docker 1.10 has made significant improvements to compose files, which may mean they&rsquo;re ready for production.</p>
+
+<h4 id="docker-swarm">Docker Swarm</h4>
+
+<p>Docker Swarm is dockers home brewed solution to multi host deployments, orchestration, and scheduling. I&rsquo;ll cover these terms thoroughly in Part 2, but the gist is that we need a tool to monitor the state of our containers and hosts, and &ldquo;schedule&rdquo; containers to be placed on our hosts.</p>
+
+<p>Docker Swarm is a double edged sword. On the one hand, it&rsquo;s directly supported by Docker, and thus using it is rather easy; setting up a docker deployment with swarm is fairly quick. On the other hand, Docker Swarm is not nearly as powerful as its main competitors, Mesos and Kubernetes, and is typically not considered ready for large scale production use. Of course, the cost of setting up Mesos or Kubernetes is significantly higher, hence the double edge. <a href="http://radar.oreilly.com/2015/10/swarm-v-fleet-v-kubernetes-v-mesos.html">This is a great article</a> comparing the most popular Container Orchestration tools.</p>
+
+<p>In part two, I&rsquo;ll be using Mesos at a high level to describe large scale deployments. However, most of the concepts will apply to any Docker Orchestration system, so if you&rsquo;re attached to Swarm, don&rsquo;t fret. It&rsquo;s improving rapidly, and is probably good for all but the largest projects.</p>
+
+<h2 id="docker-ideologies">Docker Ideologies</h2>
+
+<p>Docker is rather unbiased in how it allows you to use it, giving you significant freedom. That said, there are several principles that are typically desirable that will guide how you set up containers.</p>
+
+<ul>
+<li>Keep containers small and cheap - this plays into the implementation details, but ideally your containers are very small, and thus easy to trash and re-create.</li>
+<li>One process per container - This is a good general rule for all containers. Later on we&rsquo;ll see that this is not a hard and fast rule, but in general you want containers to have one main purpose, even if there are other smaller processes (eg. syslog) supporting it.</li>
+<li>Trash and rebuild, not fix and restart - This is another rule that we&rsquo;ll find some exceptions to in the practical world, but ideally we treat containers like white boxes - if they&rsquo;ve failed, throw it away and start some new ones.</li>
+<li>Store data in volumes, not containers - <a href="#volumes">Volumes</a>, as discussed above, are directories that live on the Host and are mounted into containers. They separate the data from the container itself, and allow it to persist beyond the container lifecycle, and even be shared by containers (eg. read only configuration). Almost all data you care about should be stored in volumes, including logs, configuration, user data, and interesting output.</li>
+<li>Don&rsquo;t connect to containers directly - This is related to the above; you want to have access to everything you need in a container without having to connect to it directly, as this doesn&rsquo;t scale well and is difficult in several situations. Ideally we won&rsquo;t be running an ssh server on our container, and everything we&rsquo;d want to see, like logs, should be exposed via volumes.</li>
+<li>Open as few ports as possible - While it may seem necessary to open ports for every application you want to connect to on your container, most of the time this is not true. Connecting containers with Docker Networks allows containers to intercommunicate, and if you are exposing the right data in volumes, you should have little need to open any ports. A common exception is a debug port for your database service, but even this can be replaced by a debug container that is connected to the docker network.</li>
+</ul>
+
+<h1 id="real-world-docker">Real World Docker</h1>
+
+<p>This last section will go over some of the common hurdles that you will undertake with any docker setup.</p>
+
+<h2 id="persisting-data">Persisting Data</h2>
+
+<p>As briefly touched upon above, Volumes and Volume Containers can be used to persist data. Docker will never delete a volume unless you tell it to, and it still won&rsquo;t do it if at least one container is using that volume. But it&rsquo;s still a common enough operation (primarily in dev environments) that it&rsquo;s good to have a handle on protecting your data in the long term.</p>
+
+<p>The best defense, aside from limiting unauthorized access to your Docker Hosts, is Volume Containers. First create your volume(s), either manually via the docker daemon, or automatically in the next step. Then create a volume container that mounts those volumes, and does nothing else. Then never touch this container again. This dangling reference to each volume will make sure that your volumes cannot be accidentally destroyed.</p>
+
+<p>If you do delete the last container that mounts your data, your data is still there (unless you manually told docker to delete it). List your volumes via <code>docker volume ls</code>, then use the printed name to re-mount it in a new Volume Container.</p>
+
+<p>To backup your data, you can use docker inspect on your docker host to find the path of a volume on the host, then back that up. Or, you can deploy a new Backup Container that mounts the volume, compresses the data on it, and backs it up however you see fit.</p>
+
+<p>Any data not in a volume will NOT be persisted. If your Docker Host crashes, containers should enter the stopped state, where the data is probably recoverable. This process is not guaranteed however, so it&rsquo;s best to always put data in volumes.</p>
+
+<h2 id="logging">Logging</h2>
+
+<p>There are two degrees of logging that you&rsquo;ll be interested in with docker.</p>
+
+<p>The first is your services logs - these are often at the debug level, and help you determine at fine detail what your services are doing or how/why they failed. They are typically too large to store long term; in traditional VM systems they are stored on the VM itself, and rotated regularly. With docker, these logs can be treated in a similar fashion, except they should be stored in a volume created by the container running them (or to make all instances of a service log in one place, use a shared volume from a volume container). The logs will remain available even if the container dies, and can be rotated as normal.</p>
+
+<p>The second type of log are your event logs. These are higher level logs that typically are kept for much longer. For large systems, you&rsquo;ll want to store these somewhere like logstash to be easily shared and queried, since events are usually independent of the underlying scaling mechanism. These logstash servers can themselves be containers on your docker network, storing their data in volumes provided by a logstash Volume Container.</p>
+
+<p>Either type of log may require a system like syslog running on your container. This is a common example of a reasonable exception to the one process per container rule.</p>
+
+<h2 id="monitoring">Monitoring</h2>
+
+<p>While after the fact observation is done with event logs, real time monitoring is not a simple ordeal. In Part 2, I&rsquo;ll show a couple ways it can be used, typically in combination with your Service Discovery or Container Orchestration/Scheduling infrastructure.</p>
+
+<p>For manual inspections, the docker daemon provides several command line utilities to peer into containers. For automated solutions, you&rsquo;ll typically have another sub process on your containers that monitors it (a consul agent, mesos daemon, nagios daemon, sensu agent, and so on). This is the second common exception to the one process per container rule.</p>
+
+<p>There are also several commercial solutions built specifically for docker, easily found by searching for &ldquo;Docker Monitoring&rdquo;. However, I recommend integrating your monitoring into one of your other pieces of infrastructure, to reduce boilerplate and maintenance. Using a technology that helps you scale to do your monitoring will help ensure your monitoring is also scalable.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>I hope this has been an illustrative introduction to the various pieces that make up Docker. Surely there&rsquo;s more to be said, but this should be enough for us to confidently get our hands dirty in Part 2, where we&rsquo;ll use what we&rsquo;ve learned as building blocks to build a scalable Docker Service.</p>
+
+    </div>
+
+    <footer>
+        <ul class="stats">
+    
+        
+
+        
+        
+            <li>
+                
+                
+                    
+
+                    
+
+                    
+                        <i class="Page(&#34;Scaling with Docker Part 1&#34;)">&nbsp; Tags</i>
+                    
+                
+            </li>
+        
+    
+
+    
+    
+        <li><a href='/tags/docker'>docker</a></li>
+    
+        <li><a href='/tags/scaling'>scaling</a></li>
+    
+        <li><a href='/tags/mesos'>mesos</a></li>
+    
+        <li><a href='/tags/containers'>containers</a></li>
+    
+        <li><a href='/tags/virtual-machines'>virtual-machines</a></li>
+    
+        <li><a href='/tags/production'>production</a></li>
+    
+        <li><a href='/tags/service-discovery'>service-discovery</a></li>
+    
+        <li><a href='/tags/consul'>consul</a></li>
+    
+        <li><a href='/tags/consul-template'>consul-template</a></li>
+    
+        <li><a href='/tags/load-balancing'>load-balancing</a></li>
+    
+        <li><a href='/tags/ha-proxy'>ha-proxy</a></li>
+    
+        <li><a href='/tags/medium-scale'>medium-scale</a></li>
+    
+        <li><a href='/tags/large-scale'>large-scale</a></li>
+    
+        <li><a href='/tags/images'>images</a></li>
+    
+</ul>
+
+    </footer>
+</article>
+<ul class="actions pagination">
+    
+        <li><a href="http://brandonokert.com/articles/testinginreact/"
+                class="button big previous">Testing in React</a></li>
+    
+
+    
+        <li><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/"
+                class="button big next">Scaling with Docker Part 2</a></li>
+    
+</ul>
+
+
+
+    
+        <article class="post">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "brandonokert" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </article>
+    
+
+
+    </div>
+    
+<section id="sidebar">
+
+    
+        <section id="intro">
+            
+            
+                
+                    <img src="http://www.gravatar.com/avatar/1796d3ceead403d9616a2093bc42ec18?s=110" width="" alt="My face" />
+                
+            
+            
+                <header>
+                    <h2>Brandon Okert</h2>
+                    <p>Husband, Full Stack Web Developer, Gopher, Runner, Coffee Lover, Book Reader, Food Maker.</p>
+                </header>
+            
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+        </section>
+
+    
+      
+        <section id="recent-posts">
+            <ul class="posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    
+                
+
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/json-management-patterns-in-go/">Json Management Patterns In Go</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-04-18'>
+                                    April 18, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-2/">Scaling with Docker Part 2</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-03-07'>
+                                    March 7, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/scaling-with-docker-part-1/">Scaling with Docker Part 1</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2016-02-16'>
+                                    February 16, 2016</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/testinginreact/">Testing in React</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2015-08-04'>
+                                    August 4, 2015</time>
+                            </header>
+                        </article>
+                    </li>
+                
+                    <li>
+                        <article>
+                            <header>
+                                <h3><a href="http://brandonokert.com/articles/phpmessagescheduler/">Building a Distributed Message Scheduler in PHP</a></h3>
+                                
+                                    
+                                
+                                <time class="published" datetime=
+                                    '2014-07-21'>
+                                    July 21, 2014</time>
+                            </header>
+                        </article>
+                    </li>
+                
+
+                
+                    <li>
+                        <ul class="actions">
+                            <li><a href=
+                            
+                                /
+                            
+                            class="button">View more posts</a></li>
+                        </ul>
+                    </li>
+                
+            </ul>
+        </section>
+      
+
+    
+
+    
+        
+
+    
+        <section id="footer">
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/bcokert" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/brandon-okert-850aa632" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/BrandonOkert" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+
+            <p class="copyright">&copy; BrandonOkert.com. Powered by <a href="//gohugo.io" target="_blank">Hugo</a></p>
+        </section>
+
+</section>
+
+            </div>
+        <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+        
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/util.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/backToTop.js"></script>
+        <script src="/js/highlight.pack.js"></script>
+
+        
+            <script src="/js/sequenced-image.js"></script>
+        
+
+            
+            <script>hljs.initHighlightingOnLoad();</script>
+            
+    </body>
+</html>
+

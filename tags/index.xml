@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on BrandonOkert.com</title>
+    <link>http://brandonokert.com/tags/</link>
+    <description>Recent content in Tags on BrandonOkert.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 07 Mar 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://brandonokert.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Consul</title>
+      <link>http://brandonokert.com/tags/consul/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/consul/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Consul Template</title>
+      <link>http://brandonokert.com/tags/consul-template/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/consul-template/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Containers</title>
+      <link>http://brandonokert.com/tags/containers/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/containers/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Coverage</title>
+      <link>http://brandonokert.com/tags/coverage/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/coverage/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>http://brandonokert.com/tags/docker/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>First</title>
+      <link>http://brandonokert.com/tags/first/</link>
+      <pubDate>Sun, 13 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/first/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go</title>
+      <link>http://brandonokert.com/tags/go/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Golang</title>
+      <link>http://brandonokert.com/tags/golang/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ha Proxy</title>
+      <link>http://brandonokert.com/tags/ha-proxy/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/ha-proxy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Images</title>
+      <link>http://brandonokert.com/tags/images/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/images/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>http://brandonokert.com/tags/introduction/</link>
+      <pubDate>Sun, 13 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/introduction/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Jasmine</title>
+      <link>http://brandonokert.com/tags/jasmine/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/jasmine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Javascript</title>
+      <link>http://brandonokert.com/tags/javascript/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/javascript/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Json</title>
+      <link>http://brandonokert.com/tags/json/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/json/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Karma</title>
+      <link>http://brandonokert.com/tags/karma/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/karma/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Large Scale</title>
+      <link>http://brandonokert.com/tags/large-scale/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/large-scale/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Load Balancing</title>
+      <link>http://brandonokert.com/tags/load-balancing/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/load-balancing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Medium Scale</title>
+      <link>http://brandonokert.com/tags/medium-scale/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/medium-scale/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mesos</title>
+      <link>http://brandonokert.com/tags/mesos/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/mesos/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Message Scheduler</title>
+      <link>http://brandonokert.com/tags/message-scheduler/</link>
+      <pubDate>Mon, 21 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/message-scheduler/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Micro Service</title>
+      <link>http://brandonokert.com/tags/micro-service/</link>
+      <pubDate>Mon, 21 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/micro-service/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mocking</title>
+      <link>http://brandonokert.com/tags/mocking/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/mocking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Patterns</title>
+      <link>http://brandonokert.com/tags/patterns/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/patterns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Php</title>
+      <link>http://brandonokert.com/tags/php/</link>
+      <pubDate>Mon, 21 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Production</title>
+      <link>http://brandonokert.com/tags/production/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/production/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Project</title>
+      <link>http://brandonokert.com/tags/project/</link>
+      <pubDate>Mon, 21 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/project/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>React</title>
+      <link>http://brandonokert.com/tags/react/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/react/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Rest</title>
+      <link>http://brandonokert.com/tags/rest/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/rest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Rewire</title>
+      <link>http://brandonokert.com/tags/rewire/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/rewire/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Scaling</title>
+      <link>http://brandonokert.com/tags/scaling/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/scaling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Service Discovery</title>
+      <link>http://brandonokert.com/tags/service-discovery/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/service-discovery/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Testing</title>
+      <link>http://brandonokert.com/tags/testing/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Unittest</title>
+      <link>http://brandonokert.com/tags/unittest/</link>
+      <pubDate>Tue, 04 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/unittest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Validation</title>
+      <link>http://brandonokert.com/tags/validation/</link>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/validation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Virtual Machines</title>
+      <link>http://brandonokert.com/tags/virtual-machines/</link>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://brandonokert.com/tags/virtual-machines/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
